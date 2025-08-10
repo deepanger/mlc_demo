@@ -1,0 +1,142 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "mlc-demo"
+version = "1.0.0"
+description = "Model Lifecycle Center - Web application for AML model analysis workflow"
+readme = "TECHNICAL_SPECIFICATION.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.12"
+authors = [{ name = "deepanger", email = "deepanger@example.com" }]
+keywords = [
+    "django",
+    "machine-learning",
+    "aml",
+    "model-lifecycle",
+    "data-analysis",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Web Environment",
+    "Framework :: Django",
+    "Framework :: Django :: 5.2",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Financial and Insurance Industry",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Internet :: WWW/HTTP",
+    "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: Office/Business :: Financial",
+]
+
+dependencies = [
+    "django>=5.2.0,<6.0",
+    "django-crispy-forms>=2.0",
+    "crispy-bootstrap5>=2024.2",
+    "matplotlib>=3.7.0",
+    "pandas>=2.0.0",
+    "numpy>=1.24.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-django",
+    "black",
+    "flake8",
+    "mypy",
+    "django-debug-toolbar",
+]
+
+[project.urls]
+Homepage = "https://github.com/deepanger/mlc_demo"
+Repository = "https://github.com/deepanger/mlc_demo.git"
+Issues = "https://github.com/deepanger/mlc_demo/issues"
+Documentation = "https://github.com/deepanger/mlc_demo/blob/main/TECHNICAL_SPECIFICATION.md"
+
+[project.scripts]
+mlc-demo = "manage:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["core", "mlc_center"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/core",
+    "/mlc_center",
+    "/manage.py",
+    "/create_sample_data.py",
+    "/TECHNICAL_SPECIFICATION.md",
+]
+exclude = ["/.venv", "/db.sqlite3", "**/__pycache__", "**/*.pyc"]
+
+# Django settings
+[tool.django]
+settings_module = "mlc_center.settings"
+
+# Black code formatting
+[tool.black]
+line-length = 88
+target-version = ['py312']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  migrations
+  | \.venv
+  | build
+  | dist
+)/
+'''
+
+# Flake8 linting
+[tool.flake8]
+max-line-length = 88
+extend-ignore = ["E203", "W503"]
+exclude = [".venv", "migrations", "__pycache__", "build", "dist"]
+
+# MyPy type checking
+[tool.mypy]
+python_version = "3.12"
+check_untyped_defs = true
+ignore_missing_imports = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_unused_configs = true
+exclude = ["migrations/", ".venv/"]
+
+# Pytest configuration
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "mlc_center.settings"
+python_files = ["tests.py", "test_*.py", "*_tests.py"]
+addopts = ["--tb=short", "--strict-markers", "--disable-warnings"]
+testpaths = ["core/tests"]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+]
+
+# Coverage configuration
+[tool.coverage.run]
+source = ["core", "mlc_center"]
+omit = [
+    "*/migrations/*",
+    "*/venv/*",
+    "*/env/*",
+    "manage.py",
+    "*/settings/*",
+    "*/tests/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+]
