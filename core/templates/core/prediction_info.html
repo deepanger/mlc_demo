@@ -1,0 +1,22 @@
+{% extends "core/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Prediction Info{% endblock %}
+
+{% block page_title %}Prediction Information{% endblock %}
+
+{% block content %}
+<form 
+    hx-post="{% url 'core:prediction_info' %}" 
+    hx-target="#run-details-container" 
+    hx-swap="innerHTML"
+    class="mb-4">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <button type="submit" class="btn btn-primary mt-3">Analyze Runs</button>
+</form>
+
+<div id="run-details-container">
+    <!-- HTMX content will be loaded here -->
+</div>
+{% endblock %}

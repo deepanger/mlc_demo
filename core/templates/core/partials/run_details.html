@@ -1,0 +1,29 @@
+{% for item in runs_with_details %}
+<div class="card mb-3">
+    <div class="card-header">
+        <strong>Run ID:</strong> {{ item.run.run_id }}
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <p><strong>Month:</strong> {{ item.run.month }}</p>
+                <p><strong>Customer Count:</strong> {{ item.run.customer_count }}</p>
+            </div>
+            <div class="col-md-6">
+                <p><strong>Available Tables:</strong></p>
+                <ul class="list-unstyled">
+                    {% for table in item.tables %}
+                        <li>
+                            {% if table.available %}
+                                {{ table.name }}
+                            {% else %}
+                                <span class="text-danger">{{ table.name }} (Not Available)</span>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
