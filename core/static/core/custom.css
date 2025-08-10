@@ -26,9 +26,10 @@ body {
 .sidebar h1 {
     color: #9A2A2A;
     /* Dark red for main title */
-    font-size: 1.8em;
+    font-size: 1.3em;
     margin-bottom: 30px;
     text-align: center;
+    line-height: 1.2;
 }
 
 .sidebar .nav-link {
@@ -122,7 +123,7 @@ h2 {
     font-weight: 600;
 }
 
-.table-striped > tbody > tr:nth-of-type(odd) > td {
+.table-striped>tbody>tr:nth-of-type(odd)>td {
     background-color: #f8f9fa;
 }
 

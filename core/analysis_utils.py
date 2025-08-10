@@ -63,7 +63,7 @@ def generate_transaction_analysis(run_id):
     df_formatted = df.copy()
     df_formatted['Date'] = df_formatted['Date'].dt.strftime('%Y-%m-%d')
     df_formatted['Total_Amount'] = df_formatted['Total_Amount'].apply(lambda x: f"${x:,.0f}")
-    
+
     df_html = df_formatted.to_html(
         classes='table table-striped table-hover',
         table_id='transaction-table',
@@ -128,7 +128,7 @@ def generate_target_analysis(run_id):
     # Convert DataFrame to HTML with better formatting
     df_formatted = df.copy()
     df_formatted['Detection_Rate'] = df_formatted['Detection_Rate'].apply(lambda x: f"{x}%")
-    
+
     df_html = df_formatted.to_html(
         classes='table table-striped table-hover',
         table_id='target-table',

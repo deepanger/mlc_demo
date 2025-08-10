@@ -1,15 +1,28 @@
 from django.shortcuts import render
+from django.contrib import messages
 from .models import BaseModel, AnalysisRun
 from .forms import RunIdForm
 from .analysis_utils import generate_transaction_analysis, generate_target_analysis
 import random
+import re
 
 def prediction_info_view(request):
-    form = RunIdForm()
     base_models = BaseModel.objects.all()
 
-    # Auto-display recent 5 runs when page loads
-    recent_runs = AnalysisRun.objects.all().order_by('-created_at')[:5]
+    # Get selected base model from request or default to first
+    selected_model_id = request.GET.get('base_model') or request.POST.get('base_model')
+    if selected_model_id:
+        try:
+            selected_model = BaseModel.objects.get(id=selected_model_id)
+        except BaseModel.DoesNotExist:
+            selected_model = base_models.first()
+    else:
+        selected_model = base_models.first()
+
+    form = RunIdForm(initial={'base_model': selected_model})
+
+    # Auto-display recent 5 runs for selected model when page loads
+    recent_runs = AnalysisRun.objects.filter(base_model=selected_model).order_by('-created_at')[:5]
     runs_with_details = []
 
     for run in recent_runs:
@@ -22,39 +35,43 @@ def prediction_info_view(request):
             'tables': [{'name': t, 'available': t in available_tables} for t in all_tables]
         })
 
-    # Mock logic to handle form submission via HTMX
-    if request.htmx:
-        run_ids_str = request.POST.get('run_ids', '')
-        run_ids = [r.strip() for r in run_ids_str.split(',') if r.strip()]
+    # Handle form submission
+    if request.method == 'POST':
+        form = RunIdForm(request.POST)
+        if form.is_valid():
+            base_model = form.cleaned_data['base_model']
+            run_ids = form.cleaned_data['run_ids']
 
-        # For demo, we'll just pick the first base model
-        base_model = base_models.first()
+            runs_with_details = []
+            for run_id in run_ids:
+                run, created = AnalysisRun.objects.get_or_create(
+                    base_model=base_model,
+                    run_id=run_id,
+                    defaults={
+                        'month': f'2025-0{random.randint(1,9)}',
+                        'customer_count': random.randint(5000, 20000)
+                    }
+                )
 
-        runs_with_details = []
-        for run_id in run_ids:
-            run, created = AnalysisRun.objects.get_or_create(
-                base_model=base_model,
-                run_id=run_id,
-                defaults={
-                    'month': f'2025-0{random.randint(1,9)}',
-                    'customer_count': random.randint(5000, 20000)
-                }
-            )
+                # Mock table availability
+                all_tables = ['transactions', 'customer_profiles', 'alerts', 'sar_filings']
+                available_tables = random.sample(all_tables, random.randint(2, 4))
 
-            # Mock table availability
-            all_tables = ['transactions', 'customer_profiles', 'alerts', 'sar_filings']
-            available_tables = random.sample(all_tables, random.randint(2, 4))
+                runs_with_details.append({
+                    'run': run,
+                    'tables': [{'name': t, 'available': t in available_tables} for t in all_tables]
+                })
 
-            runs_with_details.append({
-                'run': run,
-                'tables': [{'name': t, 'available': t in available_tables} for t in all_tables]
-            })
-
-        return render(request, 'core/partials/run_details.html', {'runs_with_details': runs_with_details})
+            if request.headers.get('HX-Request'):
+                return render(request, 'core/partials/run_details.html', {'runs_with_details': runs_with_details})
+        else:
+            # Form has validation errors
+            if request.headers.get('HX-Request'):
+                return render(request, 'core/partials/form_errors.html', {'form': form})
 
     context = {
         'base_models': base_models,
-        'selected_model_id': base_models.first().id if base_models else None,
+        'selected_model_id': selected_model.id if selected_model else None,
         'form': form,
         'recent_runs_with_details': runs_with_details,
     }
@@ -62,8 +79,20 @@ def prediction_info_view(request):
 
 def transaction_analysis_view(request):
     base_models = BaseModel.objects.all()
-    # Get all saved run IDs for selection
-    run_objs = AnalysisRun.objects.all().order_by('run_id')
+
+    # Get selected base model from request
+    selected_model_id = request.GET.get('base_model')
+    if selected_model_id:
+        try:
+            selected_model = BaseModel.objects.get(id=selected_model_id)
+        except BaseModel.DoesNotExist:
+            selected_model = base_models.first()
+    else:
+        selected_model = base_models.first()
+
+    # Get run IDs for selected base model only
+    run_objs = AnalysisRun.objects.filter(base_model=selected_model).order_by('run_id')
+
     # Check for selected run_id from query parameters
     selected_run = request.GET.get('run_id')
 
@@ -71,11 +100,15 @@ def transaction_analysis_view(request):
     df_html = None
     chart_data = None
     if selected_run:
-        df_html, chart_data = generate_transaction_analysis(selected_run)
+        # Verify that the run_id belongs to the selected model
+        if run_objs.filter(run_id=selected_run).exists():
+            df_html, chart_data = generate_transaction_analysis(selected_run)
+        else:
+            selected_run = None  # Invalid run_id for this model
 
     context = {
         'base_models': base_models,
-        'selected_model_id': base_models.first().id if base_models else None,
+        'selected_model_id': selected_model.id if selected_model else None,
         'run_ids': run_objs,
         'selected_run_id': selected_run,
         'df_html': df_html,
@@ -85,8 +118,20 @@ def transaction_analysis_view(request):
 
 def target_analysis_view(request):
     base_models = BaseModel.objects.all()
-    # Get all saved run IDs for selection
-    run_objs = AnalysisRun.objects.all().order_by('run_id')
+
+    # Get selected base model from request
+    selected_model_id = request.GET.get('base_model')
+    if selected_model_id:
+        try:
+            selected_model = BaseModel.objects.get(id=selected_model_id)
+        except BaseModel.DoesNotExist:
+            selected_model = base_models.first()
+    else:
+        selected_model = base_models.first()
+
+    # Get run IDs for selected base model only
+    run_objs = AnalysisRun.objects.filter(base_model=selected_model).order_by('run_id')
+
     # Check for selected run_id from query parameters
     selected_run = request.GET.get('run_id')
 
@@ -94,11 +139,15 @@ def target_analysis_view(request):
     df_html = None
     chart_data = None
     if selected_run:
-        df_html, chart_data = generate_target_analysis(selected_run)
+        # Verify that the run_id belongs to the selected model
+        if run_objs.filter(run_id=selected_run).exists():
+            df_html, chart_data = generate_target_analysis(selected_run)
+        else:
+            selected_run = None  # Invalid run_id for this model
 
     context = {
         'base_models': base_models,
-        'selected_model_id': base_models.first().id if base_models else None,
+        'selected_model_id': selected_model.id if selected_model else None,
         'run_ids': run_objs,
         'selected_run_id': selected_run,
         'df_html': df_html,

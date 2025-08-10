@@ -18,10 +18,25 @@
 
 <div id="run-details-container">
     {% if recent_runs_with_details %}
-        <h5>Recent 5 Runs:</h5>
+        <h5>Recent 5 Runs for {{ form.base_model.value }}:</h5>
         {% include 'core/partials/run_details.html' with runs_with_details=recent_runs_with_details %}
     {% else %}
-        <!-- HTMX content will be loaded here -->
+        <p class="text-muted">No runs found for the selected base model. Enter run IDs above to create new analysis runs.</p>
     {% endif %}
 </div>
+
+<script>
+// Auto-submit form when base model changes to update recent runs
+document.addEventListener('DOMContentLoaded', function() {
+    const baseModelSelect = document.querySelector('select[name="base_model"]');
+    if (baseModelSelect) {
+        baseModelSelect.addEventListener('change', function() {
+            // Reload page with new base_model parameter
+            const url = new URL(window.location);
+            url.searchParams.set('base_model', this.value);
+            window.location.href = url.toString();
+        });
+    }
+});
+</script>
 {% endblock %}
