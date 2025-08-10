@@ -5,6 +5,56 @@
 {% block page_title %}Transaction Analysis{% endblock %}
 
 {% block content %}
-<p>Select a run ID to see the transaction analysis.</p>
-<!-- Analysis content will go here -->
+<form method="get" class="mb-4">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label for="run_id" class="form-label">Select Run ID:</label>
+        <select name="run_id" id="run_id" class="form-select">
+            <option value="">-- Select run_id --</option>
+            {% for run in run_ids %}
+                <option value="{{ run.run_id }}" {% if run.run_id == selected_run_id %}selected{% endif %}>{{ run.run_id }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Load Analysis</button>
+</form>
+
+<div id="analysis-results">
+    {% if selected_run_id %}
+        <h5>Transaction Analysis for Run ID: {{ selected_run_id }}</h5>
+
+        {% if chart_data %}
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h6 class="mb-0">Transaction Analysis Charts</h6>
+                        </div>
+                        <div class="card-body text-center">
+                            <img src="data:image/png;base64,{{ chart_data }}" class="img-fluid" alt="Transaction Analysis Chart">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        {% if df_html %}
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h6 class="mb-0">Transaction Data Table</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                {{ df_html|safe }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+    {% endif %}
+</div>
 {% endblock %}

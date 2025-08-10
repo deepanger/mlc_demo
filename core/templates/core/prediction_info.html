@@ -6,9 +6,9 @@
 {% block page_title %}Prediction Information{% endblock %}
 
 {% block content %}
-<form 
-    hx-post="{% url 'core:prediction_info' %}" 
-    hx-target="#run-details-container" 
+<form
+    hx-post="{% url 'core:prediction_info' %}"
+    hx-target="#run-details-container"
     hx-swap="innerHTML"
     class="mb-4">
     {% csrf_token %}
@@ -17,6 +17,11 @@
 </form>
 
 <div id="run-details-container">
-    <!-- HTMX content will be loaded here -->
+    {% if recent_runs_with_details %}
+        <h5>Recent 5 Runs:</h5>
+        {% include 'core/partials/run_details.html' with runs_with_details=recent_runs_with_details %}
+    {% else %}
+        <!-- HTMX content will be loaded here -->
+    {% endif %}
 </div>
 {% endblock %}

@@ -1,20 +1,35 @@
 from django.shortcuts import render
 from .models import BaseModel, AnalysisRun
 from .forms import RunIdForm
+from .analysis_utils import generate_transaction_analysis, generate_target_analysis
 import random
 
 def prediction_info_view(request):
     form = RunIdForm()
     base_models = BaseModel.objects.all()
-    
+
+    # Auto-display recent 5 runs when page loads
+    recent_runs = AnalysisRun.objects.all().order_by('-created_at')[:5]
+    runs_with_details = []
+
+    for run in recent_runs:
+        # Mock table availability
+        all_tables = ['transactions', 'customer_profiles', 'alerts', 'sar_filings']
+        available_tables = random.sample(all_tables, random.randint(2, 4))
+
+        runs_with_details.append({
+            'run': run,
+            'tables': [{'name': t, 'available': t in available_tables} for t in all_tables]
+        })
+
     # Mock logic to handle form submission via HTMX
     if request.htmx:
         run_ids_str = request.POST.get('run_ids', '')
         run_ids = [r.strip() for r in run_ids_str.split(',') if r.strip()]
-        
+
         # For demo, we'll just pick the first base model
         base_model = base_models.first()
-        
+
         runs_with_details = []
         for run_id in run_ids:
             run, created = AnalysisRun.objects.get_or_create(
@@ -25,11 +40,11 @@ def prediction_info_view(request):
                     'customer_count': random.randint(5000, 20000)
                 }
             )
-            
+
             # Mock table availability
             all_tables = ['transactions', 'customer_profiles', 'alerts', 'sar_filings']
             available_tables = random.sample(all_tables, random.randint(2, 4))
-            
+
             runs_with_details.append({
                 'run': run,
                 'tables': [{'name': t, 'available': t in available_tables} for t in all_tables]
@@ -41,22 +56,53 @@ def prediction_info_view(request):
         'base_models': base_models,
         'selected_model_id': base_models.first().id if base_models else None,
         'form': form,
+        'recent_runs_with_details': runs_with_details,
     }
     return render(request, 'core/prediction_info.html', context)
 
 def transaction_analysis_view(request):
     base_models = BaseModel.objects.all()
+    # Get all saved run IDs for selection
+    run_objs = AnalysisRun.objects.all().order_by('run_id')
+    # Check for selected run_id from query parameters
+    selected_run = request.GET.get('run_id')
+
+    # Generate analysis data if run_id is selected
+    df_html = None
+    chart_data = None
+    if selected_run:
+        df_html, chart_data = generate_transaction_analysis(selected_run)
+
     context = {
         'base_models': base_models,
         'selected_model_id': base_models.first().id if base_models else None,
+        'run_ids': run_objs,
+        'selected_run_id': selected_run,
+        'df_html': df_html,
+        'chart_data': chart_data,
     }
     return render(request, 'core/transaction_analysis.html', context)
 
 def target_analysis_view(request):
     base_models = BaseModel.objects.all()
+    # Get all saved run IDs for selection
+    run_objs = AnalysisRun.objects.all().order_by('run_id')
+    # Check for selected run_id from query parameters
+    selected_run = request.GET.get('run_id')
+
+    # Generate analysis data if run_id is selected
+    df_html = None
+    chart_data = None
+    if selected_run:
+        df_html, chart_data = generate_target_analysis(selected_run)
+
     context = {
         'base_models': base_models,
         'selected_model_id': base_models.first().id if base_models else None,
+        'run_ids': run_objs,
+        'selected_run_id': selected_run,
+        'df_html': df_html,
+        'chart_data': chart_data,
     }
     return render(request, 'core/target_analysis.html', context)
 
