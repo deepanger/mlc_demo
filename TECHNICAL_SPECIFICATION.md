@@ -1,336 +1,363 @@
-# **技术规格说明书：Mode## 2. 技术选型
+# Model Lifecycle Center (MLC) - 技术规格说明书
 
-项目采用以下技术组合实现快速开发：
+## 目录
+1. [项目概述](#1-项目概述)
+2. [系统架构](#2-系统架构)
+3. [技术栈选择](#3-技术栈选择)
+4. [数据模型设计](#4-数据模型设计)
+5. [用户界面设计](#5-用户界面设计)
+6. [功能模块详述](#6-功能模块详述)
+7. [核心特性](#7-核心特性)
+8. [项目部署](#8-项目部署)
+9. [开发规范](#9-开发规范)
 
-- ## 3. UI/UX 设计
-
-- **项目名称**: Model Lifecycle Center（已实现完整标题## 3. UI/UX 设计
-
-- **项目名称**: Model Lifecycle Center
-- **整体布局**:
-  - **左侧导航栏 (Sidebar)**：固定宽度，包含指向不同功能页面的链接。
-  - **右侧主内容区 (Main Content)**：展示表单、数据表格、图表等核心内容。
-- **色彩主题**:
-  - **主色调**: 暗红色 (Dark Red, `#9A2A2A`)，用于标题、高亮和关键元素。
-  - **背景色**: 浅灰色 (`#f8f9fa`)，营造清爽专业的视觉感受。
-  - **侧边栏**: 白色背景 (`#ffffff`)，带有阴影效果。
-  - **文本色**: 深灰色 (`#333333`, `#495057`)，确保良好的可读性。
-- **核心交互**:
-  - **基础模型选择器**: 在左侧导航栏上方，提供下拉菜单选择基础模型。
-  - **动态内容加载**: 基础模型切换时自动更新关联的run_id列表。
-  - **表单验证**: run_id必须以字母开头，包含字母、数字和下划线。
-  - **响应式设计**: 使用Bootstrap实现移动端适配。布局**:
-  - **左侧导航栏 (Sidebar)**：固定宽度，包含指向不同功能页面的链接。
-  - **右侧主内容区 (Main Content)**：展示表单、数据表格、图表等核心内容。
-- **色彩主题**（已更新为浅色主题）:
-  - **主色调**: 暗红色 (Dark Red, `#9A2## 7. 核心功能特性
-
-### 7.1. 数据验证与格式控制
-- **Run ID格式验证**: 使用正则表达式确保run_id以字母开头，只包含字母、数字和下划线
-- **基础模型关联**: run_id与特定的基础模型绑定，确保数据一致性
-- **表单验证**: 实时验证用户输入，提供清晰的错误提示
-
-### 7.2. 动态数据生成
-- **一致性数据**: 使用run_id的哈希值作为随机种子，确保相同run_id总是生成相同的分析结果
-- **多样化图表**:
-  - Transaction Analysis: 交易量柱状图 + 告警率趋势图
-  - Target Analysis: 目标数量堆叠条形图 + 检测率折线图
-- **响应式表格**: 使用pandas生成的HTML表格，配合Bootstrap样式实现响应式设计
-
-### 7.3. 用户体验优化
-- **自动加载**: 页面加载时自动显示最近5个运行记录
-- **智能切换**: 基础模型切换时自动更新关联的run_id列表
-- **清爽界面**: 浅色主题设计，提升可读性
-- **完整标题**: 显示"Model Lifecycle Center"完整名称
-
-### 7.4. 技术架构优势
-- **模块化设计**: 分析逻辑独立于视图逻辑，便于维护和扩展
-- **Base64图表**: 图表直接嵌入HTML，无需静态文件管理
-- **数据一致性**: 通过Django ORM确保数据关系完整性
-- **可扩展性**: 预留接口便于接入真实数据源
-
-## 8. 设计决策说明
-
-1.  **基础模型 (Base Model) 的作用**:
-    - 基础模型作为分类标签，不同模型有独立的run_id列表，实现了数据隔离
-
-2.  **多 `run_id` 的分析逻辑**:
-    - 在Prediction Information页面支持批量输入，在Analysis页面支持单选分析
-
-3.  **"不可用 Table" 的判断标准**:
-    - 与预定义的标准列表进行比对，随机模拟部分表格不可用的情况
-
-4.  **Run ID格式要求**:
-    - 必须以字母开头，支持字母、数字和下划线，提供实时验证
-
-5.  **用户界面设计**:
-    - 采用浅色主题、响应式设计和完整的用户交互流程、高亮和关键元素。
-  - **背景色**: 浅灰色 (`#f8f9fa`)，营造清爽专业的视觉感受。
-  - **侧边栏**: 白色背景 (`#ffffff`)，带有阴影效果。
-  - **文本色**: 深灰色 (`#333333`, `#495057`)，确保良好的可读性。
-- **核心交互**（已实现）:
-  - **基础模型选择器**: 在左侧导航栏上方，提供下拉菜单选择基础模型。
-  - **动态内容加载**: 基础模型切换时自动更新关联的run_id列表。
-  - **表单验证**: run_id必须以字母开头，包含字母、数字和下划线。
-  - **响应式设计**: 使用Bootstrap实现移动端适配。Django 5.2.5**
-  - 功能强大，生态成熟，能快速构建稳健的Web应用。自带ORM、路由、模板系统。
-- **数据库**: **SQLite**
-  - 轻量级，无需额外配置，非常适合本地开发和原型演示。
-- **前端增强**:
-  - **django-crispy-forms + crispy-bootstrap5**: 用于美化 Django 表单，使其更专业、更易于管理。
-  - **Bootstrap 5.3.3**: 提供响应式布局和现代化UI组件。
-  - **原生JavaScript**: 实现基础模型切换和表单交互。
-- **数据分析与可视化**:
-  - **pandas**: 用于生成模拟数据表格。
-  - **matplotlib**: 生成分析图表，支持Base64编码直接嵌入HTML。
-  - **numpy**: 支持数据计算和随机数生成。
-- **包管理**: **uv + virtual environment**
-  - 新一代的 Python 包管理工具，速度极快，兼容 `pip` 和 `venv`。ter (MLC Demo)**
+---
 
 ## 1. 项目概述
 
-### 1.1. 背景
-当前，我行的反洗钱（AML）机器学习模型分析流程依赖于 Jupyter Notebook。分析师需要为每次模型训练或预测手动输入 `run_id`，然后从 Notebook 中截图分析结果（如表格和图表）并手动整理。此过程效率低下、易于出错且难以追溯和共享。
+### 1.1 背景与问题
+当前，银行的反洗钱（AML）机器学习模型分析流程依赖于 Jupyter Notebook，存在以下问题：
+- 分析师需要手动输入 `run_id` 进行模型训练或预测
+- 需要从 Notebook 中截图分析结果并手动整理
+- 过程效率低下、易于出错且难以追溯和共享
 
-### 1.2. 目标
-本项目开发了一个名为 **Model Lifecycle Center** 的Web应用原型（Demo）。该应用取代了现有的 Notebook 工作流，提供了一个集中化、可交互的界面来管理和分析 AML 模型的生命周期。其核心目标：
-- **简化工作流程**：用户只需选择基础模型和输入 `run_id` 即可自动获取和展示相关分析。
-- **提升可视化效果**：以专业的仪表盘（Dashboard）形式展示数据表格和图表。
-- **构建可扩展框架**：使用模拟数据（Mock Data）搭建了完整的应用框架，为未来接入真实数据和后端逻辑奠定了基础。
+### 1.2 解决方案
+Model Lifecycle Center (MLC) 是一个Web应用原型，旨在：
+- **简化工作流程**：通过选择基础模型和输入 `run_id` 自动获取分析结果
+- **提升可视化效果**：以专业仪表盘形式展示数据表格和图表
+- **构建可扩展框架**：使用模拟数据建立完整应用架构，便于未来接入真实数据
 
-### 1.3. 目标用户
-银行内部的机器学习工程师、数据分析师和模型验证团队。
+### 1.3 目标用户
+- 银行内部机器学习工程师
+- 数据分析师
+- 模型验证团队
 
-## 2. 技术选型
+---
 
-为了实现快速开发和满足“尽可能少的技术栈”要求，我们采用以下技术组合：
+## 2. 系统架构
 
-- **后端框架**: **Django (最新版)**
-  - 理由：功能强大，生态成熟，能快速构建稳健的Web应用。自带ORM、路由、模板系统，能很好地满足本项目需求。
-- **数据库**: **SQLite**
-  - 理由：轻量级，无需额外配置，非常适合本地开发和原型演示。
-- **前端增强**:
-  - **django-crispy-forms**: 用于美化 Django 表单，使其更专业、更易于管理。
-  - **htmx**: 用于实现页面的局部动态刷新（如提交表单后只更新结果区域），避免全页面重新加载，提升用户体验，同时无需编写复杂的 JavaScript。
-- **包管理**: **uv**
-  - 理由：新一代的 Python 包管理工具，速度极快，兼容 `pip` 和 `venv`。
-- **图表生成**: **Matplotlib**
-  - 理由：延续现有 Notebook 的技术栈，易于将现有绘图逻辑迁移至后端。
+### 2.1 整体架构
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   前端界面      │    │   Django后端    │    │   数据存储      │
+│                 │    │                 │    │                 │
+│ • Bootstrap UI  │◄──►│ • 视图逻辑      │◄──►│ • SQLite数据库  │
+│ • 响应式设计    │    │ • 业务逻辑      │    │ • 模拟数据      │
+│ • 表单验证      │    │ • 数据分析      │    │                 │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+                                │
+                       ┌─────────────────┐
+                       │   分析引擎      │
+                       │                 │
+                       │ • Pandas处理    │
+                       │ • Matplotlib图表│
+                       │ • 数据可视化    │
+                       └─────────────────┘
+```
 
-## 3. UI/UX 设计
+### 2.2 应用层次
+- **表现层**：Bootstrap + 自定义CSS，响应式Web界面
+- **业务层**：Django视图和表单处理，数据验证
+- **数据层**：Django ORM + SQLite，模型关系管理
+- **分析层**：Pandas数据处理 + Matplotlib图表生成
 
-- **项目名称**: Model Lifecycle Center
-- **整体布局**:
-  - **左侧导航栏 (Sidebar)**：固定宽度，包含指向不同功能页面的链接。
-  - **右侧主内容区 (Main Content)**：展示表单、数据表格、图表等核心内容。
-- **色彩主题**:
-  - **主色调**: 暗红色 (Dark Red, e.g., `#9A2A2A`)，用于标题、高亮和关键元素。
-  - **辅助色**: 灰色 (Gray, e.g., `#333333` for background, `#CCCCCC` for text)，用于背景、文本和边框，营造专业稳重的视觉感受。
-- **核心交互**:
-  - **顶部模型选择器**: 在页面顶部或左侧导航栏上方，提供一个下拉菜单，用于选择“基础模型”。选定的模型ID将始终显示在该区域。
-  - **动态内容加载**: 使用 `htmx` 实现，例如在输入 `run_id` 后，仅刷新下方的结果展示区。
+---
 
-## 4. 数据模型 (Database Schema)
+## 3. 技术栈选择
 
-由于是 Demo 阶段，我们仅需定义最核心的模型来支撑应用框架。数据将存储在 SQLite 中。
+### 3.1 后端技术
+| 技术 | 版本 | 用途 |
+|------|------|------|
+| Django | 5.2.5 | Web框架，提供ORM、路由、模板系统 |
+| SQLite | 内置 | 轻量级数据库，适合原型开发 |
+| Python | 3.12.7 | 主要编程语言 |
 
+### 3.2 前端技术
+| 技术 | 版本 | 用途 |
+|------|------|------|
+| Bootstrap | 5.3.3 | 响应式UI框架 |
+| django-crispy-forms | 2.x | 表单美化和验证 |
+| 原生JavaScript | ES6+ | 基础交互功能 |
+
+### 3.3 数据分析技术
+| 技术 | 版本 | 用途 |
+|------|------|------|
+| Pandas | 2.0+ | 数据处理和表格生成 |
+| Matplotlib | 3.7+ | 图表绘制和可视化 |
+| NumPy | 1.24+ | 数值计算支持 |
+
+### 3.4 开发工具
+| 工具 | 用途 |
+|------|------|
+| uv | Python包管理器 |
+| pyproject.toml | 项目配置管理 |
+| Black | 代码格式化 |
+| Flake8 | 代码质量检查 |
+
+---
+
+## 4. 数据模型设计
+
+### 4.1 核心实体
+
+#### BaseModel (基础模型)
 ```python
-# models.py
-
-from django.db import models
-
 class BaseModel(models.Model):
-    """
-    代表一个基础模型，例如 'AML_Model_v3'。
-    """
-    name = models.CharField(max_length=100, unique=True, help_text="基础模型的名称")
-    description = models.TextField(blank=True, null=True, help_text="模型的简要描述")
+    name = models.CharField(max_length=100, unique=True)
+    description = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+```
 
-    def __str__(self):
-        return self.name
-
+#### AnalysisRun (分析运行)
+```python
 class AnalysisRun(models.Model):
-    """
-    存储用户输入的 run_id 及其关联的基础模型。
-    一个 run_id 对应一次分析会话。
-    """
-    base_model = models.ForeignKey(BaseModel, on_delete=models.CASCADE, related_name="runs")
-    run_id = models.CharField(max_length=255, help_text="用户输入的 run_id")
-    # 存储一些模拟的元数据
+    base_model = models.ForeignKey(BaseModel, on_delete=models.CASCADE)
+    run_id = models.CharField(max_length=255)
     month = models.CharField(max_length=20, default="2025-07")
     customer_count = models.IntegerField(default=10000)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ('base_model', 'run_id') # 同一模型下 run_id 是唯一的
-
-    def __str__(self):
-        return f"{self.run_id} for {self.base_model.name}"
+        unique_together = ('base_model', 'run_id')
 ```
 
-## 5. 功能模块与页面设计
+### 4.2 数据关系
+- 一个基础模型可以有多个分析运行
+- 每个run_id在同一基础模型下是唯一的
+- 支持跨模型的run_id重复（不同模型可以有相同的run_id）
 
-### 5.1. 基础布局 (base.html)
-- 定义包含左侧导航栏和右侧内容区的 HTML 骨架。
-- 顶部包含"Model Lifecycle Center"完整标题和基础模型选择器。
-- 引入 Bootstrap 5.3.3 和自定义的 CSS 文件（用于配色和布局）。
-- 实现了响应式设计和现代化的UI界面。
+---
 
-### 5.2. Prediction Information 页面
-- **URL**: `/` or `/prediction-info/`
-- **功能**:
-  1. 允许用户选择基础模型并输入一个或多个 `run_id`（以逗号分隔）。
-  2. **表单验证**: run_id必须以字母开头，包含字母、数字和下划线。
-  3. 表单提交后，后端接收基础模型和 `run_id`，为其创建 `AnalysisRun` 记录（如果不存在）。
-  4. **自动显示**: 页面加载时自动显示所选基础模型的最近5个run记录。
-  5. 切换基础模型时，自动更新显示对应的最近记录。
-- **后端逻辑**:
-  - `views.py` - `prediction_info_view`:
-    - `GET` 请求：渲染带表单的页面，显示所选基础模型的最近5个run。
-    - `POST` 请求：
-      - 解析输入的基础模型和 `run_id` 列表。
-      - 表单验证：检查run_id格式（必须以字母开头）。
-      - **模拟数据生成**:
-        - 对每个 `run_id`，生成模拟元数据（如月份、客户数）。
-        - 定义预期的 Table 列表（`['transactions', 'customer_profiles', 'alerts', 'sar_filings']`）。
-        - 随机将其中一两个 Table 标记为"不可用"。
-      - 渲染结果并返回。
-- **UI 展示**:
-  - 使用 `django-crispy-forms` 的清晰表单。
-  - 基础模型选择器。
-  - 结果区以卡片（Card）形式展示每个 `run_id` 的信息，包含：
-    - Run ID
-    - Month
-    - Customer Number
-    - 可用 Table 列表（不可用的项以红色字体高亮）。
+## 5. 用户界面设计
 
-### 5.3. Transaction Analysis 页面
-- **URL**: `/transaction-analysis/`
-- **功能**:
-  1. 提供基础模型选择器和run_id下拉菜单，列出所选基础模型的所有 `run_id`。
-  2. 用户选择基础模型和 `run_id` 后，页面自动加载并显示相关的分析结果。
-  3. **数据验证**: 确保run_id属于所选的基础模型。
-- **后端逻辑**:
-  - `views.py` - `transaction_analysis_view`:
-    - 接收选择的基础模型和 `run_id`。
-    - **分析逻辑**: 调用 `analysis_utils.py` 中的 `generate_transaction_analysis` 函数。
-      - 该函数接收 `run_id`，使用 `pandas` 生成模拟的交易数据 DataFrame。
-      - 使用 `matplotlib` 基于此 DataFrame 生成分析图表（每日交易量柱状图和告警率趋势图）。
-      - **图表处理**: 将 Matplotlib `Figure` 对象保存到内存中的 `BytesIO` 对象，然后进行 Base64 编码，以便在 HTML `<img>` 标签中直接显示。
-    - 将 DataFrame (转换为 HTML) 和 Base64 编码的图表字符串传递给模板。
-- **UI 展示**:
-  - 页面顶部是基础模型和 `run_id` 选择器（两列布局）。
-  - 下方分为两个卡片区域：
-    - 第一个卡片：显示 Matplotlib 生成的图表图片。
-    - 第二个卡片：以 HTML 表格形式展示 Pandas DataFrame。
-    - 表格使用Bootstrap样式，具有良好的响应式设计。
+### 5.1 整体布局
+```
+┌─────────────────────────────────────────────────┐
+│                页面标题栏                        │
+│            Model Lifecycle Center              │
+├─────────────┬───────────────────────────────────┤
+│   侧边导航   │                                   │
+│            │                                   │
+│ • 基础模型   │            主内容区                │
+│   选择器    │                                   │
+│            │        • 表单和数据               │
+│ • 页面导航   │        • 图表和表格               │
+│   - 预测信息 │        • 分析结果                │
+│   - 交易分析 │                                   │
+│   - 目标分析 │                                   │
+│   - 模型证明 │                                   │
+│   - 预测    │                                   │
+└─────────────┴───────────────────────────────────┘
+```
 
-### 5.4. Target Analysis 页面
-- **URL**: `/target-analysis/`
-- **功能与逻辑**: 与 "Transaction Analysis" 页面架构相同。
-- **后端逻辑**:
-  - `views.py` - `target_analysis_view`: 功能与transaction_analysis_view类似。
-  - **分析逻辑**: 调用 `analysis_utils.py` 中的 `generate_target_analysis` 函数。
-    - 生成模拟的 Target 数据（包含月份、Main Targets、Other Targets、Detection Rate的 DataFrame）。
-    - 生成两个图表：按月展示 Target 数量的堆叠条形图和检测率趋势折线图。
-- **UI 展示**:
-  - 基础模型和 `run_id` 选择器。
-  - Target 数据表格（使用相同的Bootstrap样式）。
-  - Target 数量可视化图表（双图表布局）。
+### 5.2 设计主题
+- **主色调**：暗红色 (`#9A2A2A`) 用于标题和重要元素
+- **背景色**：浅灰色 (`#f8f9fa`) 提供清爽的视觉体验
+- **侧边栏**：白色背景 (`#ffffff`) 带阴影效果
+- **文本色**：深灰色 (`#333333`, `#495057`) 确保可读性
 
-### 5.5. Model Proving & Forecasting 页面
-- **URL**: `/model-proving/`, `/forecasting/`
-- **功能**: 作为占位符页面。
-- **后端逻辑**:
-  - `views.py`:
-    - 调用一个通用函数，生成一个随机的 Matplotlib 图表（例如，简单的正弦曲线或散点图）。
-    - 将其转换为 Base64 编码并传递给模板。
-- **UI 展示**:
-  - 页面标题。
-  - 一张居中显示的占位图表。
+### 5.3 响应式设计
+- 使用Bootstrap网格系统
+- 支持桌面、平板、手机等多种设备
+- 表格和图表自适应屏幕尺寸
 
-## 6. 项目设置与管理
+---
 
-1.  **项目初始化**:
-    ```bash
-    # 创建并激活虚拟环境
-    uv venv
-    source .venv/bin/activate
+## 6. 功能模块详述
 
-    # 安装核心依赖
-    uv pip install django django-crispy-forms crispy-bootstrap5 matplotlib pandas numpy
+### 6.1 Prediction Information (预测信息)
+**路径**: `/` 或 `/prediction-info/`
 
-    # 创建 Django 项目和应用
-    django-admin startproject mlc_center .
-    python manage.py startapp core
-    ```
+**功能特性**:
+- 基础模型选择器
+- Run ID批量输入（支持逗号分隔）
+- Run ID格式验证（必须以字母开头）
+- 自动显示最近5个运行记录
+- 表可用性状态显示
 
-2.  **目录结构**:
-    ```
-    mlc_demo/
-    ├── .venv/                          # 虚拟环境
-    ├── db.sqlite3                      # SQLite数据库
-    ├── manage.py                       # Django管理脚本
-    ├── create_sample_data.py           # 示例数据创建脚本
-    ├── TECHNICAL_SPECIFICATION.md     # 技术规格文档
-    ├── mlc_center/                     # Django项目配置
-    │   ├── __init__.py
-    │   ├── asgi.py
-    │   ├── settings.py                 # 项目设置
-    │   ├── urls.py                     # 主URL配置
-    │   └── wsgi.py
-    └── core/                           # 核心应用
-        ├── migrations/                 # 数据库迁移文件
-        ├── templates/core/             # 模板文件
-        │   ├── base.html              # 基础模板
-        │   ├── prediction_info.html   # 预测信息页面
-        │   ├── transaction_analysis.html # 交易分析页面
-        │   ├── target_analysis.html   # 目标分析页面
-        │   ├── model_proving.html     # 模型证明页面
-        │   ├── forecasting.html       # 预测页面
-        │   └── partials/              # 部分模板
-        │       ├── run_details.html
-        │       └── form_errors.html
-        ├── static/core/               # 静态文件
-        │   └── custom.css            # 自定义样式
-        ├── __init__.py
-        ├── admin.py
-        ├── apps.py
-        ├── models.py                 # 数据模型
-        ├── views.py                  # 视图函数
-        ├── urls.py                   # URL路由
-        ├── forms.py                  # 表单定义
-        └── analysis_utils.py         # 分析工具函数
-    ```
+**工作流程**:
+1. 用户选择基础模型
+2. 页面自动加载该模型的最近5个运行记录
+3. 用户可输入新的run_id创建分析记录
+4. 系统验证格式并保存到数据库
+5. 显示运行详情和表可用性状态
 
-3.  **运行项目**:
-    ```bash
-    # 激活虚拟环境
-    source .venv/bin/activate
+### 6.2 Transaction Analysis (交易分析)
+**路径**: `/transaction-analysis/`
 
-    # 执行数据库迁移
-    python manage.py migrate
+**功能特性**:
+- 基础模型和Run ID联动选择
+- 动态数据生成和可视化
+- 交易量趋势图表
+- 告警率分析图表
+- 详细数据表格展示
 
-    # 创建示例数据
-    python create_sample_data.py
+**数据生成逻辑**:
+- 基于run_id哈希值确保数据一致性
+- 生成30天交易数据
+- 包含交易量、金额、可疑交易数、告警率等指标
 
-    # 启动开发服务器
-    python manage.py runserver
-    ```
+### 6.3 Target Analysis (目标分析)
+**路径**: `/target-analysis/`
 
-4.  **示例数据**:
-    - **基础模型**: AML_Model_v3, AML_Model_v4, Fraud_Detection_v2
-    - **分析运行**: 每个模型包含4-5个符合格式的run_id（以字母开头）
-    - **模拟数据**: 自动生成的交易和目标分析数据
+**功能特性**:
+- 与交易分析类似的界面结构
+- 目标数量堆叠条形图
+- 检测率趋势折线图
+- 月度目标分析数据表格
 
-## 7. 待确认的问题 (已解决)
+**数据生成逻辑**:
+- 生成12个月的目标数据
+- 包含Main Targets、Other Targets、检测率等指标
+- 双图表展示（条形图+折线图）
 
-1.  **“基础模型 (Base Model)” 的具体作用？**
-    - **回答**: 是一个标签，但会影响分析行为。所有模型的预期 Table 列表是一致的。
+### 6.4 Model Proving (模型证明)
+**路径**: `/model-proving/`
 
-2.  **多 `run_id` 的分析逻辑？**
-    - **回答**: 暂时按“选择其中一个 `run_id`”进行分析。
+**功能特性**:
+- 占位符页面
+- 基础布局展示
+- 为未来功能预留接口
 
-3.  **“不可用 Table” 的判断标准？**
-    - **回答**: 与一个预定义的标准列表进行比对。
+### 6.5 Forecasting (预测)
+**路径**: `/forecasting/`
+
+**功能特性**:
+- 占位符页面
+- 基础布局展示
+- 为未来功能预留接口
+
+---
+
+## 7. 核心特性
+
+### 7.1 数据验证
+- **Run ID格式控制**: 正则表达式 `^[a-zA-Z][a-zA-Z0-9_]*$`
+- **基础模型关联**: 确保run_id属于正确的基础模型
+- **实时表单验证**: 前端和后端双重验证
+
+### 7.2 数据生成
+- **一致性保证**: 使用run_id哈希值作为随机种子
+- **多样化图表**: 支持柱状图、折线图、堆叠图等多种类型
+- **Base64图表**: 图表直接嵌入HTML，无需文件管理
+
+### 7.3 用户体验
+- **自动加载**: 页面初始化时显示相关数据
+- **智能切换**: 基础模型变更时自动更新关联选项
+- **响应式表格**: 使用Bootstrap样式的自适应表格
+
+### 7.4 技术架构
+- **模块化设计**: 分析逻辑与视图逻辑分离
+- **ORM数据管理**: Django模型确保数据一致性
+- **可扩展接口**: 预留真实数据接入点
+
+---
+
+## 8. 项目部署
+
+### 8.1 环境准备
+```bash
+# 创建虚拟环境
+uv venv
+source .venv/bin/activate
+
+# 安装依赖
+uv pip install -e .
+```
+
+### 8.2 数据库初始化
+```bash
+# 执行迁移
+python manage.py migrate
+
+# 创建示例数据
+python create_sample_data.py
+```
+
+### 8.3 运行服务
+```bash
+# 启动开发服务器
+python manage.py runserver
+
+# 访问应用
+# http://localhost:8000
+```
+
+### 8.4 项目结构
+```
+mlc_demo/
+├── .venv/                          # 虚拟环境
+├── pyproject.toml                  # 项目配置
+├── manage.py                       # Django管理入口
+├── create_sample_data.py           # 示例数据脚本
+├── mlc_center/                     # Django项目配置
+│   ├── settings.py                 # 项目设置
+│   ├── urls.py                     # URL路由
+│   └── wsgi.py                     # WSGI配置
+└── core/                           # 核心应用
+    ├── models.py                   # 数据模型
+    ├── views.py                    # 视图逻辑
+    ├── forms.py                    # 表单定义
+    ├── urls.py                     # 应用路由
+    ├── analysis_utils.py           # 分析工具
+    ├── templates/core/             # 模板文件
+    │   ├── base.html
+    │   ├── prediction_info.html
+    │   ├── transaction_analysis.html
+    │   └── target_analysis.html
+    └── static/core/                # 静态资源
+        └── custom.css
+```
+
+---
+
+## 9. 开发规范
+
+### 9.1 代码风格
+- 使用Black进行代码格式化
+- 遵循PEP 8编码规范
+- 88字符行长度限制
+
+### 9.2 命名规范
+- **模型**: 使用驼峰命名法 (BaseModel)
+- **视图**: 使用下划线命名法 (prediction_info_view)
+- **模板**: 使用下划线命名法 (prediction_info.html)
+- **CSS类**: 使用短横线命名法 (nav-link)
+
+### 9.3 文档规范
+- 所有函数和类需要docstring
+- 复杂逻辑需要行内注释
+- API变更需要更新文档
+
+### 9.4 测试规范
+- 使用pytest进行单元测试
+- 视图函数需要测试覆盖
+- 表单验证需要测试覆盖
+
+### 9.5 版本控制
+- 使用语义化版本号 (Semantic Versioning)
+- 提交信息遵循约定式提交规范
+- 功能开发使用feature分支
+
+---
+
+## 附录
+
+### A. 示例数据
+项目包含以下示例数据：
+- **基础模型**: AML_Model_v3, AML_Model_v4, Fraud_Detection_v2
+- **分析运行**: 每个模型包含4-5个run_id
+- **数据格式**: 所有run_id以字母开头，符合验证规则
+
+### B. API设计原则
+1. **基础模型关联**: 所有操作基于基础模型进行数据隔离
+2. **Run ID唯一性**: 在同一基础模型下run_id唯一
+3. **数据一致性**: 相同run_id始终生成相同的分析结果
+4. **表可用性**: 随机模拟部分数据表不可用的情况
+
+### C. 扩展计划
+1. **真实数据接入**: 替换模拟数据生成逻辑
+2. **用户认证**: 添加用户管理和权限控制
+3. **API接口**: 提供RESTful API供第三方调用
+4. **数据导出**: 支持分析结果导出为PDF/Excel
+5. **实时更新**: 添加WebSocket支持实时数据更新
