@@ -2,48 +2,126 @@
 
 ## 目录
 1. [项目概述](#1-项目概述)
-2. [系统架构](#2-系统架构)
-3. [技术栈选择](#3-技术栈选择)
-4. [数据模型设计](#4-数据模型设计)
-5. [用户界面设计](#5-用户界面设计)
-6. [功能模块详述](#6-功能模块详述)
-7. [核心特性](#7-核心特性)
-8. [项目部署](#8-项目部署)
-9. [开发规范](#9-开发规范)
+2. [业务场景分析](#2-业务场景分析)
+3. [系统架构](#3-系统架构)
+4. [技术栈选择](#4-技术栈选择)
+5. [数据模型设计](#5-数据模型设计)
+6. [用户界面设计](#6-用户界面设计)
+7. [功能模块详述](#7-功能模块详述)
+8. [核心特性](#8-核心特性)
+9. [项目部署](#9-项目部署)
+10. [开发规范](#10-开发规范)
+11. [未来规划](#11-未来规划)
 
 ---
 
 ## 1. 项目概述
 
 ### 1.1 背景与问题
-当前，银行的反洗钱（AML）机器学习模型分析流程依赖于 Jupyter Notebook，存在以下问题：
-- 分析师需要手动输入 `run_id` 进行模型训练或预测
-- 需要从 Notebook 中截图分析结果并手动整理
+在银行反洗钱（AML）业务中，我们使用Google AML AI平台进行机器学习模型的训练和预测。当前分析流程存在以下问题：
+
+**业务背景**：
+- 使用Google AML AI功能进行模型训练和预测操作
+- 训练结果和预测结果以tables形式存储在BigQuery数据集中
+- 需要定期重新训练模型以适应新的金融犯罪行为模式
+- 每次重训练后需要进行完整的模型验证和分析
+
+**现有痛点**：
+- 分析师需要在Jupyter Notebook中手动输入run_id和其他参数
+- 使用Python调用SQL查询BigQuery数据进行分析和聚合
+- 结果需要截图保存并手动整理到网页文档中
 - 过程效率低下、易于出错且难以追溯和共享
+- 缺乏统一的分析结果展示和管理平台
 
 ### 1.2 解决方案
-Model Lifecycle Center (MLC) 是一个Web应用原型，旨在：
-- **简化工作流程**：通过选择基础模型和输入 `run_id` 自动获取分析结果
-- **提升可视化效果**：以专业仪表盘形式展示数据表格和图表
-- **构建可扩展框架**：使用模拟数据建立完整应用架构，便于未来接入真实数据
+Model Lifecycle Center (MLC) 是一个Web应用原型，专为银行AML模型分析场景设计：
+
+**核心价值**：
+- **替代Jupyter Notebook工作流**：将手动输入run_id和参数的过程Web化
+- **自动化数据查询**：集成BigQuery连接，自动执行SQL分析查询
+- **统一结果展示**：以专业仪表盘形式展示分析结果，无需截图整理
+- **模型验证流程**：支持transaction analysis、target analysis、proving等完整分析流程
+
+**技术架构**：
+- **前端Web界面**：替代Jupyter Notebook的交互方式
+- **后端数据处理**：Python + SQL查询逻辑，模拟真实BigQuery操作
+- **Demo框架设计**：使用模拟数据建立完整架构，预留真实数据接入点
+- **可扩展设计**：便于未来接入Google AML AI和BigQuery真实数据
 
 ### 1.3 目标用户
-- 银行内部机器学习工程师
-- 数据分析师
-- 模型验证团队
+- **AML分析师**：进行模型训练后的分析验证工作
+- **机器学习工程师**：负责模型重训练和性能监控
+- **合规团队**：需要查看模型验证结果和合规报告
+- **风险管理团队**：评估新模型对金融犯罪检测的有效性
+
+### 1.4 项目定位
+**Demo性质**：
+- 当前为概念验证和框架搭建阶段
+- 使用模拟数据模拟真实BigQuery查询结果
+- 重点在于建立完整的Web化分析流程
+- 为未来接入Google AML AI和BigQuery做准备
+
+**未来扩展**：
+- 集成Google Cloud BigQuery数据源
+- 接入Google AML AI模型训练和预测结果
+- 实现真实的SQL查询和数据分析逻辑
+- 添加模型生命周期管理功能
 
 ---
 
-## 2. 系统架构
+## 2. 业务场景分析
 
-### 2.1 整体架构
+### 2.1 真实业务流程
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   前端界面      │    │   Django后端    │    │   数据存储      │
+│   市场变化      │    │   模型重训练    │    │   结果验证      │
+│                 │    │                 │    │                 │
+│ • 新犯罪模式    │───►│ • Google AML AI │───►│ • Transaction   │
+│ • 监管要求变化  │    │ • BigQuery存储  │    │   Analysis      │
+│ • 业务规则调整  │    │ • Train/Predict │    │ • Target Analysis│
+└─────────────────┘    │   Run Tables    │    │ • Model Proving │
+                       └─────────────────┘    └─────────────────┘
+                                │                       │
+                       ┌─────────────────┐    ┌─────────────────┐
+                       │   数据查询      │    │   结果整理      │
+                       │                 │    │                 │
+                       │ • Python + SQL  │───►│ • 截图保存      │
+                       │ • Jupyter NB    │    │ • 手动整理      │
+                       │ • 手动输入参数  │    │ • 文档汇总      │
+                       └─────────────────┘    └─────────────────┘
+```
+
+### 2.2 当前痛点分析
+| 问题类别 | 具体问题 | 影响程度 |
+|----------|----------|----------|
+| **效率问题** | 每次分析需要手动输入run_id和参数 | 高 |
+| **一致性问题** | 不同分析师可能使用不同的查询逻辑 | 中 |
+| **可追溯性** | 分析结果依赖截图，难以追溯和复现 | 高 |
+| **协作问题** | 结果分享依赖文档整理，效率低下 | 中 |
+| **维护成本** | Jupyter Notebook模板分散维护 | 中 |
+
+### 2.3 解决方案价值
+| 改进点 | 现状 | 目标 |
+|--------|------|------|
+| **参数输入** | 手动在Notebook中修改 | Web表单化输入 |
+| **数据查询** | 每次手动执行SQL | 自动化后台查询 |
+| **结果展示** | 截图+手动整理 | 统一Web仪表盘 |
+| **结果保存** | 分散的图片文件 | 数据库统一存储 |
+| **流程标准化** | 依赖个人经验 | 标准化分析流程 |
+
+---
+
+## 3. 系统架构
+
+### 3.1 整体架构
+**当前Demo架构**：
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   前端界面      │    │   Django后端    │    │   模拟数据      │
 │                 │    │                 │    │                 │
 │ • Bootstrap UI  │◄──►│ • 视图逻辑      │◄──►│ • SQLite数据库  │
-│ • 响应式设计    │    │ • 业务逻辑      │    │ • 模拟数据      │
-│ • 表单验证      │    │ • 数据分析      │    │                 │
+│ • 响应式设计    │    │ • 业务逻辑      │    │ • 模拟BigQuery  │
+│ • 表单验证      │    │ • 数据分析      │    │   查询结果      │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
                                 │
                        ┌─────────────────┐
@@ -51,15 +129,52 @@ Model Lifecycle Center (MLC) 是一个Web应用原型，旨在：
                        │                 │
                        │ • Pandas处理    │
                        │ • Matplotlib图表│
-                       │ • 数据可视化    │
+                       │ • 模拟SQL逻辑   │
                        └─────────────────┘
 ```
 
-### 2.2 应用层次
+**未来目标架构**：
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   前端界面      │    │   Django后端    │    │  Google Cloud   │
+│                 │    │                 │    │                 │
+│ • 统一分析界面  │◄──►│ • 参数验证      │◄──►│ • BigQuery      │
+│ • 实时结果展示  │    │ • SQL查询引擎   │    │ • AML AI Tables │
+│ • 历史记录管理  │    │ • 数据处理      │    │ • Train/Predict │
+└─────────────────┘    └─────────────────┘    │   Run Results   │
+                                │              └─────────────────┘
+                       ┌─────────────────┐
+                       │   分析引擎      │
+                       │                 │
+                       │ • 真实SQL查询   │
+                       │ • 数据聚合分析  │
+                       │ • 自动化图表    │
+                       └─────────────────┘
+```
+
+### 3.2 应用层次
+**当前Demo实现**：
 - **表现层**：Bootstrap + 自定义CSS，响应式Web界面
 - **业务层**：Django视图和表单处理，数据验证
-- **数据层**：Django ORM + SQLite，模型关系管理
-- **分析层**：Pandas数据处理 + Matplotlib图表生成
+- **数据层**：Django ORM + SQLite，模拟BigQuery数据结构
+- **分析层**：Pandas数据处理 + Matplotlib图表生成，模拟SQL分析逻辑
+
+**未来生产架构**：
+- **表现层**：保持现有Web界面设计
+- **业务层**：增加BigQuery连接和SQL查询管理
+- **数据层**：Google Cloud BigQuery，真实AML AI训练结果
+- **分析层**：真实SQL查询引擎，替代模拟数据生成逻辑
+
+### 3.3 数据流设计
+**模拟数据流（当前）**：
+```
+用户输入run_id → 哈希生成种子 → 模拟数据生成 → 图表渲染 → Web展示
+```
+
+**真实数据流（目标）**：
+```
+用户输入run_id → 参数验证 → BigQuery查询 → 数据聚合分析 → 图表生成 → Web展示
+```
 
 ---
 
@@ -361,3 +476,188 @@ mlc_demo/
 3. **API接口**: 提供RESTful API供第三方调用
 4. **数据导出**: 支持分析结果导出为PDF/Excel
 5. **实时更新**: 添加WebSocket支持实时数据更新
+
+---
+
+## 11. 未来规划
+
+### 11.1 技术架构升级
+
+#### 数据源集成
+```python
+# 未来BigQuery连接配置
+from google.cloud import bigquery
+
+class BigQueryService:
+    def __init__(self):
+        self.client = bigquery.Client()
+        self.dataset_id = "aml_ai_results"
+
+    def query_train_results(self, run_id):
+        """查询训练结果表"""
+        query = f"""
+        SELECT * FROM `{self.dataset_id}.train_results`
+        WHERE run_id = '{run_id}'
+        """
+        return self.client.query(query).to_dataframe()
+
+    def query_prediction_results(self, run_id):
+        """查询预测结果表"""
+        query = f"""
+        SELECT * FROM `{self.dataset_id}.prediction_results`
+        WHERE run_id = '{run_id}'
+        """
+        return self.client.query(query).to_dataframe()
+```
+
+#### SQL查询模板化
+```python
+# 分析查询模板
+TRANSACTION_ANALYSIS_QUERY = """
+WITH daily_stats AS (
+  SELECT
+    DATE(transaction_timestamp) as date,
+    COUNT(*) as transaction_count,
+    SUM(amount) as total_amount,
+    SUM(CASE WHEN ml_score > {threshold} THEN 1 ELSE 0 END) as alerts
+  FROM `{dataset}.prediction_results`
+  WHERE run_id = '{run_id}'
+  GROUP BY DATE(transaction_timestamp)
+)
+SELECT
+  date,
+  transaction_count,
+  total_amount,
+  alerts,
+  SAFE_DIVIDE(alerts, transaction_count) * 100 as alert_rate
+FROM daily_stats
+ORDER BY date
+"""
+```
+
+### 11.2 功能扩展路线图
+
+#### 第一阶段：真实数据集成（3个月）
+- [ ] Google Cloud认证和权限配置
+- [ ] BigQuery连接器开发
+- [ ] SQL查询引擎重构
+- [ ] 数据验证和错误处理
+
+#### 第二阶段：分析功能增强（6个月）
+- [ ] 模型漂移检测
+- [ ] 自动化告警系统
+- [ ] 历史趋势对比分析
+- [ ] 多模型版本比较
+
+#### 第三阶段：企业级功能（12个月）
+- [ ] 用户权限管理系统
+- [ ] 审计日志和合规报告
+- [ ] API接口开发
+- [ ] 性能优化和扩展
+
+### 11.3 替代现有Jupyter Notebook流程
+
+#### 当前Notebook流程
+```python
+# 现有notebook典型流程
+run_id = "input_manually"  # 手动输入
+suffix = "202501"          # 手动输入
+
+# SQL查询（每个notebook重复）
+query = f"""
+SELECT * FROM dataset.table
+WHERE run_id = '{run_id}' AND month = '{suffix}'
+"""
+
+# 数据处理和可视化
+df = client.query(query).to_dataframe()
+plt.figure(figsize=(10, 6))
+plt.plot(df['date'], df['count'])
+plt.show()  # 需要截图保存
+```
+
+#### 目标Web流程
+```python
+# Web界面流程
+class TransactionAnalysisView(TemplateView):
+    def get_context_data(self, **kwargs):
+        run_id = self.request.GET.get('run_id')
+
+        # 自动查询和处理
+        data = self.query_service.get_transaction_data(run_id)
+        chart = self.chart_service.generate_chart(data)
+
+        # 自动保存和展示
+        return {
+            'data': data,
+            'chart': chart,
+            'run_id': run_id
+        }
+```
+
+### 11.4 集成Google AML AI
+
+#### AML AI结果表结构（预期）
+```sql
+-- 训练结果表
+CREATE TABLE `project.dataset.train_results` (
+  run_id STRING,
+  model_version STRING,
+  training_timestamp TIMESTAMP,
+  metrics JSON,
+  status STRING
+);
+
+-- 预测结果表
+CREATE TABLE `project.dataset.prediction_results` (
+  run_id STRING,
+  transaction_id STRING,
+  ml_score FLOAT64,
+  prediction_timestamp TIMESTAMP,
+  features JSON
+);
+
+-- 目标分析表
+CREATE TABLE `project.dataset.target_analysis` (
+  run_id STRING,
+  month STRING,
+  target_type STRING,
+  count INT64,
+  detection_rate FLOAT64
+);
+```
+
+### 11.5 监控和运维
+
+#### 性能监控
+- BigQuery查询成本监控
+- 页面响应时间追踪
+- 用户访问模式分析
+- 系统资源使用监控
+
+#### 错误处理
+```python
+class AMLAnalysisService:
+    def safe_query(self, query, run_id):
+        try:
+            result = self.bigquery_client.query(query)
+            return result.to_dataframe()
+        except Exception as e:
+            logger.error(f"Query failed for run_id {run_id}: {e}")
+            # 返回友好错误信息给用户
+            raise AnalysisError(f"数据查询失败，请检查run_id: {run_id}")
+```
+
+### 11.6 成功指标
+
+#### 技术指标
+- [ ] 查询响应时间 < 10秒
+- [ ] 系统可用性 > 99%
+- [ ] 错误率 < 1%
+- [ ] BigQuery成本控制在预算内
+
+#### 业务指标
+- [ ] 分析效率提升 50%以上
+- [ ] 结果一致性提升（减少人为错误）
+- [ ] 用户满意度 > 90%
+- [ ] Notebook使用频率下降 80%
