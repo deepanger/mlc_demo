@@ -1,0 +1,201 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Benchmark{% endblock %}
+{% block page_title %}Model Benchmark{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Model Performance Benchmark</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">Compare model performance across different metrics and timeframes.</p>
+
+                    <!-- Benchmark Controls -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label for="benchmarkType" class="form-label">Benchmark Type</label>
+                            <select class="form-select" id="benchmarkType">
+                                <option value="performance">Performance Metrics</option>
+                                <option value="accuracy">Accuracy Over Time</option>
+                                <option value="resource">Resource Usage</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="runId" class="form-label">Select Run ID</label>
+                            <select class="form-select" id="runId">
+                                <option value="">Select a run...</option>
+                                <option value="run_001">RUN_001 - AML v2.1</option>
+                                <option value="run_002">RUN_002 - AML v2.0</option>
+                                <option value="run_003">RUN_003 - AML v1.9</option>
+                                <option value="baseline">BASELINE - Standard Model</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Benchmark Actions -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6 class="card-title">Benchmark Actions</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <button class="btn btn-primary me-2" onclick="runBenchmark()">
+                                                <i class="fas fa-play"></i> Run Benchmark
+                                            </button>
+                                            <button class="btn btn-outline-secondary me-2">
+                                                <i class="fas fa-download"></i> Export Results
+                                            </button>
+                                            <button class="btn btn-outline-info">
+                                                <i class="fas fa-history"></i> View History
+                                            </button>
+                                        </div>
+                                        <div class="col-md-4 text-end">
+                                            <small class="text-muted">Last benchmark: 2 hours ago</small><br>
+                                            <small class="text-muted">Next scheduled: Tomorrow 2:00 AM</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Performance Metrics -->
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <div class="card text-center">
+                                <div class="card-body">
+                                    <h3 class="text-primary">94.2%</h3>
+                                    <h6 class="card-title">Accuracy</h6>
+                                    <small class="text-success">+2.1% vs baseline</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-center">
+                                <div class="card-body">
+                                    <h3 class="text-info">89.7%</h3>
+                                    <h6 class="card-title">Precision</h6>
+                                    <small class="text-success">+1.8% vs baseline</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-center">
+                                <div class="card-body">
+                                    <h3 class="text-warning">91.3%</h3>
+                                    <h6 class="card-title">Recall</h6>
+                                    <small class="text-success">+3.2% vs baseline</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-center">
+                                <div class="card-body">
+                                    <h3 class="text-success">90.5%</h3>
+                                    <h6 class="card-title">F1-Score</h6>
+                                    <small class="text-success">+2.5% vs baseline</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Generated Benchmark Results -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6 class="card-title">Generated Benchmark Results</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div id="benchmarkResults" style="display: none;">
+                                        <div class="alert alert-success">
+                                            <i class="fas fa-check-circle"></i> Benchmark completed successfully for <strong id="selectedRun">RUN_001</strong>
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <div class="col-md-6">
+                                                <h6>Detailed Performance Metrics:</h6>
+                                                <table class="table table-sm table-striped">
+                                                    <tbody>
+                                                        <tr><td>True Positives:</td><td>8,947</td></tr>
+                                                        <tr><td>True Negatives:</td><td>85,231</td></tr>
+                                                        <tr><td>False Positives:</td><td>1,089</td></tr>
+                                                        <tr><td>False Negatives:</td><td>732</td></tr>
+                                                        <tr><td>AUC-ROC:</td><td>0.963</td></tr>
+                                                        <tr><td>AUC-PR:</td><td>0.891</td></tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <h6>Risk Distribution:</h6>
+                                                <table class="table table-sm table-striped">
+                                                    <tbody>
+                                                        <tr><td>High Risk (>80):</td><td class="text-danger">2,347 (2.4%)</td></tr>
+                                                        <tr><td>Medium Risk (50-80):</td><td class="text-warning">12,891 (13.4%)</td></tr>
+                                                        <tr><td>Low Risk (<50):</td><td class="text-success">80,761 (84.2%)</td></tr>
+                                                    </tbody>
+                                                </table>
+
+                                                <h6 class="mt-3">Processing Statistics:</h6>
+                                                <table class="table table-sm table-striped">
+                                                    <tbody>
+                                                        <tr><td>Total Records:</td><td>95,999</td></tr>
+                                                        <tr><td>Processing Time:</td><td>4.2 minutes</td></tr>
+                                                        <tr><td>Avg per Record:</td><td>2.6ms</td></tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <h6>Model Confidence Analysis:</h6>
+                                                <div class="progress mb-2">
+                                                    <div class="progress-bar bg-success" style="width: 76%">High Confidence: 76%</div>
+                                                </div>
+                                                <div class="progress mb-2">
+                                                    <div class="progress-bar bg-warning" style="width: 18%">Medium Confidence: 18%</div>
+                                                </div>
+                                                <div class="progress">
+                                                    <div class="progress-bar bg-danger" style="width: 6%">Low Confidence: 6%</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div id="noBenchmark" class="text-center text-muted">
+                                        <i class="fas fa-chart-bar fa-3x mb-3"></i>
+                                        <p>Select a Run ID and click "Run Benchmark" to generate detailed results.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function runBenchmark() {
+    const runId = document.getElementById('runId').value;
+    if (!runId) {
+        alert('Please select a Run ID first.');
+        return;
+    }
+
+    // Show results
+    document.getElementById('noBenchmark').style.display = 'none';
+    document.getElementById('benchmarkResults').style.display = 'block';
+    document.getElementById('selectedRun').textContent = runId.toUpperCase();
+}
+</script>
+{% endblock %}

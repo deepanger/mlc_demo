@@ -1,0 +1,206 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Data Quality Helper{% endblock %}
+{% block page_title %}Data Quality Helper{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Data Quality Assessment & Improvement</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">Analyze data quality issues and get recommendations for improvement.</p>
+
+                    <!-- Data Source Selection -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label for="dataSource" class="form-label">Data Source</label>
+                            <select class="form-select" id="dataSource">
+                                <option value="transactions">Transaction Data</option>
+                                <option value="customer">Customer Profiles</option>
+                                <option value="alerts">Alert Data</option>
+                                <option value="sar">SAR Filings</option>
+                                <option value="all">All Sources</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="qualityDimension" class="form-label">Quality Dimension</label>
+                            <select class="form-select" id="qualityDimension">
+                                <option value="completeness">Completeness</option>
+                                <option value="accuracy">Accuracy</option>
+                                <option value="consistency">Consistency</option>
+                                <option value="validity">Validity</option>
+                                <option value="timeliness">Timeliness</option>
+                                <option value="all">All Dimensions</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Quality Score Dashboard -->
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6 class="card-title">Overall Data Quality Score</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row text-center">
+                                        <div class="col-md-2">
+                                            <div class="border rounded p-3">
+                                                <h3 class="text-success">87%</h3>
+                                                <small>Overall Score</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="border rounded p-3">
+                                                <h3 class="text-success">92%</h3>
+                                                <small>Completeness</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="border rounded p-3">
+                                                <h3 class="text-warning">78%</h3>
+                                                <small>Accuracy</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="border rounded p-3">
+                                                <h3 class="text-success">89%</h3>
+                                                <small>Consistency</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="border rounded p-3">
+                                                <h3 class="text-danger">65%</h3>
+                                                <small>Validity</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="border rounded p-3">
+                                                <h3 class="text-success">94%</h3>
+                                                <small>Timeliness</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quality Issues & Recommendations -->
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6 class="card-title">Quality Issues Detected</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Issue Type</th>
+                                                    <th>Affected Field</th>
+                                                    <th>Records</th>
+                                                    <th>Severity</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Missing Values</td>
+                                                    <td>customer_id</td>
+                                                    <td>1,247</td>
+                                                    <td><span class="badge bg-danger">High</span></td>
+                                                    <td><button class="btn btn-sm btn-outline-primary">Fix</button></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Format Inconsistency</td>
+                                                    <td>transaction_date</td>
+                                                    <td>3,891</td>
+                                                    <td><span class="badge bg-warning">Medium</span></td>
+                                                    <td><button class="btn btn-sm btn-outline-primary">Standardize</button></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Invalid Values</td>
+                                                    <td>amount</td>
+                                                    <td>567</td>
+                                                    <td><span class="badge bg-danger">High</span></td>
+                                                    <td><button class="btn btn-sm btn-outline-primary">Validate</button></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Duplicate Records</td>
+                                                    <td>transaction_id</td>
+                                                    <td>234</td>
+                                                    <td><span class="badge bg-warning">Medium</span></td>
+                                                    <td><button class="btn btn-sm btn-outline-primary">Dedupe</button></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Outliers</td>
+                                                    <td>age</td>
+                                                    <td>89</td>
+                                                    <td><span class="badge bg-info">Low</span></td>
+                                                    <td><button class="btn btn-sm btn-outline-primary">Review</button></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6 class="card-title">Improvement Recommendations</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="list-group list-group-flush">
+                                        <div class="list-group-item">
+                                            <h6 class="mb-1">Data Validation Rules</h6>
+                                            <p class="mb-1 small">Implement stricter validation for amount fields</p>
+                                            <small class="text-muted">Impact: High</small>
+                                        </div>
+                                        <div class="list-group-item">
+                                            <h6 class="mb-1">Automated Cleansing</h6>
+                                            <p class="mb-1 small">Set up automated date format standardization</p>
+                                            <small class="text-muted">Impact: Medium</small>
+                                        </div>
+                                        <div class="list-group-item">
+                                            <h6 class="mb-1">Duplicate Detection</h6>
+                                            <p class="mb-1 small">Enable real-time duplicate prevention</p>
+                                            <small class="text-muted">Impact: Medium</small>
+                                        </div>
+                                        <div class="list-group-item">
+                                            <h6 class="mb-1">Monitoring Dashboard</h6>
+                                            <p class="mb-1 small">Create continuous quality monitoring</p>
+                                            <small class="text-muted">Impact: High</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Quick Actions -->
+                            <div class="card mt-3">
+                                <div class="card-header">
+                                    <h6 class="card-title">Quick Actions</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-grid gap-2">
+                                        <button class="btn btn-primary btn-sm">Run Full Quality Scan</button>
+                                        <button class="btn btn-success btn-sm">Apply Auto-fixes</button>
+                                        <button class="btn btn-info btn-sm">Generate Quality Report</button>
+                                        <button class="btn btn-warning btn-sm">Schedule Quality Checks</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

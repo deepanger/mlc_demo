@@ -171,6 +171,30 @@ def forecasting_view(request):
     }
     return render(request, 'core/forecasting.html', context)
 
+def btl_analysis_view(request):
+    base_models = BaseModel.objects.all()
+    context = {
+        'base_models': base_models,
+        'selected_model_id': base_models.first().id if base_models else None,
+    }
+    return render(request, 'core/btl_analysis.html', context)
+
+def benchmark_view(request):
+    base_models = BaseModel.objects.all()
+    context = {
+        'base_models': base_models,
+        'selected_model_id': base_models.first().id if base_models else None,
+    }
+    return render(request, 'core/benchmark.html', context)
+
+def documentation_helper_view(request):
+    base_models = BaseModel.objects.all()
+    context = {
+        'base_models': base_models,
+        'selected_model_id': base_models.first().id if base_models else None,
+    }
+    return render(request, 'core/documentation_helper.html', context)
+
 def load_run_details_view(request):
     # This view is now handled inside prediction_info_view with request.htmx
     pass

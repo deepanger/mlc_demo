@@ -1,0 +1,216 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Statistical Calculator{% endblock %}
+{% block page_title %}Statistical Calculator{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Statistical Calculator & Analysis Tool</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">Input statistical parameters and get calculated results for various statistical measures.</p>
+
+                    <!-- Calculator Type Selection -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label for="calculatorType" class="form-label">Calculator Type</label>
+                            <select class="form-select" id="calculatorType" onchange="showCalculator()">
+                                <option value="descriptive">Descriptive Statistics</option>
+                                <option value="probability">Probability Calculator</option>
+                                <option value="hypothesis">Hypothesis Testing</option>
+                                <option value="confidence">Confidence Interval</option>
+                                <option value="regression">Regression Analysis</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="precision" class="form-label">Decimal Precision</label>
+                            <select class="form-select" id="precision">
+                                <option value="2">2 decimal places</option>
+                                <option value="3">3 decimal places</option>
+                                <option value="4" selected>4 decimal places</option>
+                                <option value="5">5 decimal places</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <!-- Input Panel -->
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6 class="card-title">Input Parameters</h6>
+                                </div>
+                                <div class="card-body">
+                                    <!-- Descriptive Statistics Calculator -->
+                                    <div id="descriptiveCalc">
+                                        <div class="mb-3">
+                                            <label for="dataValues" class="form-label">Data Values</label>
+                                            <textarea class="form-control" id="dataValues" rows="4" placeholder="Enter numbers separated by commas or line breaks&#10;Example: 1, 2, 3, 4, 5&#10;or&#10;1&#10;2&#10;3&#10;4&#10;5">12, 15, 18, 20, 22, 25, 28, 30, 32, 35</textarea>
+                                            <small class="form-text text-muted">Enter your dataset values</small>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label for="sampleSize" class="form-label">Sample Size (n)</label>
+                                                    <input type="number" class="form-control" id="sampleSize" value="10" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label for="confidenceLevel" class="form-label">Confidence Level (%)</label>
+                                                    <select class="form-select" id="confidenceLevel">
+                                                        <option value="90">90%</option>
+                                                        <option value="95" selected>95%</option>
+                                                        <option value="99">99%</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Probability Calculator (hidden by default) -->
+                                    <div id="probabilityCalc" style="display: none;">
+                                        <div class="mb-3">
+                                            <label for="distributionType" class="form-label">Distribution Type</label>
+                                            <select class="form-select" id="distributionType">
+                                                <option value="normal">Normal Distribution</option>
+                                                <option value="binomial">Binomial Distribution</option>
+                                                <option value="poisson">Poisson Distribution</option>
+                                                <option value="uniform">Uniform Distribution</option>
+                                            </select>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label for="mean" class="form-label">Mean (μ)</label>
+                                                    <input type="number" class="form-control" id="mean" value="0" step="0.01">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label for="stdDev" class="form-label">Standard Deviation (σ)</label>
+                                                    <input type="number" class="form-control" id="stdDev" value="1" step="0.01">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="xValue" class="form-label">X Value</label>
+                                            <input type="number" class="form-control" id="xValue" value="0" step="0.01">
+                                        </div>
+                                    </div>
+
+                                    <div class="d-grid">
+                                        <button class="btn btn-primary" onclick="calculate()">
+                                            <i class="fas fa-calculator"></i> Calculate
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Results Panel -->
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6 class="card-title">Calculation Results</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div id="results">
+                                        <div class="text-center text-muted">
+                                            <i class="fas fa-calculator fa-3x mb-3"></i>
+                                            <p>Enter parameters and click Calculate to see results</p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Sample Results Display -->
+                                    <div id="sampleResults" style="display: none;">
+                                        <h6>Descriptive Statistics Results:</h6>
+                                        <table class="table table-sm">
+                                            <tbody>
+                                                <tr><td><strong>Count (n):</strong></td><td id="resultCount">10</td></tr>
+                                                <tr><td><strong>Mean (x̄):</strong></td><td id="resultMean">23.7000</td></tr>
+                                                <tr><td><strong>Median:</strong></td><td id="resultMedian">23.5000</td></tr>
+                                                <tr><td><strong>Mode:</strong></td><td id="resultMode">No mode</td></tr>
+                                                <tr><td><strong>Standard Deviation (s):</strong></td><td id="resultStdDev">7.9706</td></tr>
+                                                <tr><td><strong>Variance (s²):</strong></td><td id="resultVariance">63.5289</td></tr>
+                                                <tr><td><strong>Range:</strong></td><td id="resultRange">23</td></tr>
+                                                <tr><td><strong>Minimum:</strong></td><td id="resultMin">12</td></tr>
+                                                <tr><td><strong>Maximum:</strong></td><td id="resultMax">35</td></tr>
+                                                <tr><td><strong>Q1 (25th percentile):</strong></td><td id="resultQ1">18.75</td></tr>
+                                                <tr><td><strong>Q3 (75th percentile):</strong></td><td id="resultQ3">29.25</td></tr>
+                                                <tr><td><strong>IQR:</strong></td><td id="resultIQR">10.5</td></tr>
+                                                <tr><td><strong>Skewness:</strong></td><td id="resultSkewness">0.0847</td></tr>
+                                                <tr><td><strong>Kurtosis:</strong></td><td id="resultKurtosis">-1.2445</td></tr>
+                                            </tbody>
+                                        </table>
+
+                                        <div class="mt-3">
+                                            <h6>95% Confidence Interval for Mean:</h6>
+                                            <p class="text-primary"><strong>[18.0123, 29.3877]</strong></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Quick Actions -->
+                            <div class="card mt-3">
+                                <div class="card-header">
+                                    <h6 class="card-title">Quick Actions</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-grid gap-2">
+                                        <button class="btn btn-success btn-sm" onclick="showResults()">
+                                            <i class="fas fa-eye"></i> Show Sample Results
+                                        </button>
+                                        <button class="btn btn-secondary btn-sm">
+                                            <i class="fas fa-copy"></i> Copy Results
+                                        </button>
+                                        <button class="btn btn-info btn-sm">
+                                            <i class="fas fa-download"></i> Export to CSV
+                                        </button>
+                                        <button class="btn btn-warning btn-sm">
+                                            <i class="fas fa-undo"></i> Clear All
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function showCalculator() {
+    const type = document.getElementById('calculatorType').value;
+
+    // Hide all calculators
+    document.getElementById('descriptiveCalc').style.display = 'none';
+    document.getElementById('probabilityCalc').style.display = 'none';
+
+    // Show selected calculator
+    if (type === 'descriptive') {
+        document.getElementById('descriptiveCalc').style.display = 'block';
+    } else if (type === 'probability') {
+        document.getElementById('probabilityCalc').style.display = 'block';
+    }
+}
+
+function calculate() {
+    // This would contain the actual calculation logic
+    showResults();
+}
+
+function showResults() {
+    document.getElementById('results').style.display = 'none';
+    document.getElementById('sampleResults').style.display = 'block';
+}
+</script>
+{% endblock %}

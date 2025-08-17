@@ -1,0 +1,231 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Documentation Helper{% endblock %}
+{% block page_title %}Documentation Helper{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">AI-Powered Documentation Assistant</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">Generate, update, and maintain model documentation automatically.</p>
+
+                    <!-- Documentation Type Selection -->
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <label for="docType" class="form-label">Documentation Type</label>
+                            <select class="form-select" id="docType">
+                                <option value="model">Model Documentation</option>
+                                <option value="data">Data Dictionary</option>
+                                <option value="process">Process Documentation</option>
+                                <option value="user">User Guide</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="outputFormat" class="form-label">Output Format</label>
+                            <select class="form-select" id="outputFormat">
+                                <option value="markdown">Markdown</option>
+                                <option value="html">HTML</option>
+                                <option value="pdf">PDF</option>
+                                <option value="docx">Word Document</option>
+                                <option value="confluence">Confluence</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="template" class="form-label">Template</label>
+                            <select class="form-select" id="template">
+                                <option value="standard">Standard Template</option>
+                                <option value="detailed">Detailed Template</option>
+                                <option value="summary">Summary Template</option>
+                                <option value="regulatory">Regulatory Template</option>
+                                <option value="custom">Custom Template</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- AI Writing Assistant -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="card border-primary">
+                                <div class="card-header bg-primary text-white">
+                                    <h6 class="card-title mb-0">
+                                        <i class="fas fa-robot"></i> AI Writing Assistant
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label for="aiPrompt" class="form-label">Describe what you want to document:</label>
+                                        <textarea class="form-control" id="aiPrompt" rows="4" placeholder="Examples:&#10;• Explain the model validation process for regulatory compliance&#10;• Create a user guide for the prediction interface&#10;• Document data quality assessment procedures&#10;• Write troubleshooting steps for common issues&#10;• Generate model performance metrics explanation"></textarea>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <div class="btn-group w-100">
+                                                <button class="btn btn-primary">
+                                                    <i class="fas fa-magic"></i> Generate with AI
+                                                </button>
+                                                <button class="btn btn-outline-secondary">
+                                                    <i class="fas fa-spell-check"></i> Grammar Check
+                                                </button>
+                                                <button class="btn btn-outline-info">
+                                                    <i class="fas fa-sync-alt"></i> Improve Writing
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <select class="form-select" id="writingStyle">
+                                                <option value="professional">Professional</option>
+                                                <option value="technical">Technical</option>
+                                                <option value="simple">Simple</option>
+                                                <option value="detailed">Detailed</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Documentation Generation -->
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h6 class="card-title mb-0">Documentation Content</h6>
+                                    <div class="btn-group btn-group-sm">
+                                        <button class="btn btn-outline-primary" id="generateDoc">
+                                            <i class="fas fa-magic"></i> Generate
+                                        </button>
+                                        <button class="btn btn-outline-secondary" id="previewDoc">
+                                            <i class="fas fa-eye"></i> Preview
+                                        </button>
+                                        <button class="btn btn-outline-success" id="exportDoc">
+                                            <i class="fas fa-download"></i> Export
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="border rounded p-3" style="min-height: 400px; background-color: #f8f9fa;">
+                                        <div class="text-center text-muted mt-5">
+                                            <i class="fas fa-file-alt fa-3x mb-3"></i>
+                                            <h5>Documentation Preview</h5>
+                                            <p>Select a documentation type and click "Generate" to create content.</p>
+                                        </div>
+
+                                        <!-- Sample generated content (hidden by default) -->
+                                        <div id="sampleContent" style="display: none;">
+                                            <h3>Model Documentation: AML Risk Assessment Model</h3>
+                                            <hr>
+
+                                            <h4>1. Model Overview</h4>
+                                            <p><strong>Model Name:</strong> AML Risk Assessment Model v2.1</p>
+                                            <p><strong>Purpose:</strong> Assess anti-money laundering risk for financial transactions</p>
+                                            <p><strong>Last Updated:</strong> August 17, 2025</p>
+
+                                            <h4>2. Model Architecture</h4>
+                                            <ul>
+                                                <li>Algorithm: Gradient Boosting Classifier</li>
+                                                <li>Framework: XGBoost</li>
+                                                <li>Features: 47 input variables</li>
+                                                <li>Output: Risk score (0-100)</li>
+                                            </ul>
+
+                                            <h4>3. Performance Metrics</h4>
+                                            <ul>
+                                                <li>Accuracy: 94.2%</li>
+                                                <li>Precision: 89.7%</li>
+                                                <li>Recall: 91.3%</li>
+                                                <li>F1-Score: 90.5%</li>
+                                            </ul>
+
+                                            <h4>4. Data Requirements</h4>
+                                            <p>The model requires the following input data:</p>
+                                            <ul>
+                                                <li>Transaction amount and frequency</li>
+                                                <li>Customer profile information</li>
+                                                <li>Geographic data</li>
+                                                <li>Historical transaction patterns</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <!-- Documentation Tasks -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6 class="card-title">Documentation Tasks</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="list-group list-group-flush">
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            <span>Model Performance Report</span>
+                                            <span class="badge bg-success">Ready</span>
+                                        </div>
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            <span>Data Dictionary Update</span>
+                                            <span class="badge bg-danger">Outdated</span>
+                                        </div>
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            <span>User Training Manual</span>
+                                            <span class="badge bg-info">In Progress</span>
+                                        </div>
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            <span>Regulatory Compliance Doc</span>
+                                            <span class="badge bg-success">Ready</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Recent Documents -->
+                            <div class="card mt-3">
+                                <div class="card-header">
+                                    <h6 class="card-title">Recent Documents</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="list-group list-group-flush">
+                                        <a href="#" class="list-group-item list-group-item-action">
+                                            <div class="d-flex w-100 justify-content-between">
+                                                <h6 class="mb-1">Model v2.1 Spec</h6>
+                                                <small>2 hours ago</small>
+                                            </div>
+                                            <p class="mb-1 small text-muted">Model specification document</p>
+                                        </a>
+                                        <a href="#" class="list-group-item list-group-item-action">
+                                            <div class="d-flex w-100 justify-content-between">
+                                                <h6 class="mb-1">Data Quality Report</h6>
+                                                <small>1 day ago</small>
+                                            </div>
+                                            <p class="mb-1 small text-muted">Data quality assessment results</p>
+                                        </a>
+                                        <a href="#" class="list-group-item list-group-item-action">
+                                            <div class="d-flex w-100 justify-content-between">
+                                                <h6 class="mb-1">User Manual</h6>
+                                                <small>3 days ago</small>
+                                            </div>
+                                            <p class="mb-1 small text-muted">End-user documentation</p>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('generateDoc').addEventListener('click', function() {
+    document.getElementById('sampleContent').style.display = 'block';
+    document.querySelector('.text-center.text-muted').style.display = 'none';
+});
+</script>
+{% endblock %}

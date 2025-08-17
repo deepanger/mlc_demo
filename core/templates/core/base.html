@@ -31,6 +31,9 @@
             <a class="nav-link {% if request.resolver_match.url_name == 'target_analysis' %}active{% endif %}" href="{% url 'core:target_analysis' %}">Target Analysis</a>
             <a class="nav-link {% if request.resolver_match.url_name == 'model_proving' %}active{% endif %}" href="{% url 'core:model_proving' %}">Model Proving</a>
             <a class="nav-link {% if request.resolver_match.url_name == 'forecasting' %}active{% endif %}" href="{% url 'core:forecasting' %}">Forecasting</a>
+            <a class="nav-link {% if request.resolver_match.url_name == 'btl_analysis' %}active{% endif %}" href="{% url 'core:btl_analysis' %}">BTL Analysis</a>
+            <a class="nav-link {% if request.resolver_match.url_name == 'benchmark' %}active{% endif %}" href="{% url 'core:benchmark' %}">Benchmark</a>
+            <a class="nav-link {% if request.resolver_match.url_name == 'documentation_helper' %}active{% endif %}" href="{% url 'core:documentation_helper' %}">Documentation Helper</a>
         </nav>
     </div>
 
