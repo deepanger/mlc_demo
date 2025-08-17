@@ -26,28 +26,31 @@
         </div>
 
         <nav class="nav flex-column">
-            <a class="nav-link {% if request.resolver_match.url_name == 'prediction_info' %}active{% endif %}" href="{% url 'core:prediction_info' %}" id="nav-prediction_info">
+            <a class="nav-link {% if request.resolver_match.url_name == 'timeline' %}active{% endif %}" href="{% url 'core:timeline' country_code %}?base_model={{ selected_model_id }}" id="nav-timeline">
+                <span class="nav-status" id="status-timeline">⚪</span> Timeline
+            </a>
+            <a class="nav-link {% if request.resolver_match.url_name == 'prediction_info' %}active{% endif %}" href="{% url 'core:prediction_info' country_code %}" id="nav-prediction_info">
                 <span class="nav-status" id="status-prediction_info">⚪</span> Prediction Information
             </a>
-            <a class="nav-link {% if request.resolver_match.url_name == 'transaction_analysis' %}active{% endif %}" href="{% url 'core:transaction_analysis' %}" id="nav-transaction_analysis">
+            <a class="nav-link {% if request.resolver_match.url_name == 'transaction_analysis' %}active{% endif %}" href="{% url 'core:transaction_analysis' country_code %}" id="nav-transaction_analysis">
                 <span class="nav-status" id="status-transaction_analysis">⚪</span> Transaction Analysis
             </a>
-            <a class="nav-link {% if request.resolver_match.url_name == 'target_analysis' %}active{% endif %}" href="{% url 'core:target_analysis' %}" id="nav-target_analysis">
+            <a class="nav-link {% if request.resolver_match.url_name == 'target_analysis' %}active{% endif %}" href="{% url 'core:target_analysis' country_code %}" id="nav-target_analysis">
                 <span class="nav-status" id="status-target_analysis">⚪</span> Target Analysis
             </a>
-            <a class="nav-link {% if request.resolver_match.url_name == 'model_proving' %}active{% endif %}" href="{% url 'core:model_proving' %}" id="nav-model_proving">
+            <a class="nav-link {% if request.resolver_match.url_name == 'model_proving' %}active{% endif %}" href="{% url 'core:model_proving' country_code %}" id="nav-model_proving">
                 <span class="nav-status" id="status-model_proving">⚪</span> Model Proving
             </a>
-            <a class="nav-link {% if request.resolver_match.url_name == 'forecasting' %}active{% endif %}" href="{% url 'core:forecasting' %}" id="nav-forecasting">
+            <a class="nav-link {% if request.resolver_match.url_name == 'forecasting' %}active{% endif %}" href="{% url 'core:forecasting' country_code %}" id="nav-forecasting">
                 <span class="nav-status" id="status-forecasting">⚪</span> Forecasting
             </a>
-            <a class="nav-link {% if request.resolver_match.url_name == 'btl_analysis' %}active{% endif %}" href="{% url 'core:btl_analysis' %}" id="nav-btl_analysis">
+            <a class="nav-link {% if request.resolver_match.url_name == 'btl_analysis' %}active{% endif %}" href="{% url 'core:btl_analysis' country_code %}" id="nav-btl_analysis">
                 <span class="nav-status" id="status-btl_analysis">⚪</span> BTL Analysis
             </a>
-            <a class="nav-link {% if request.resolver_match.url_name == 'benchmark' %}active{% endif %}" href="{% url 'core:benchmark' %}" id="nav-benchmark">
+            <a class="nav-link {% if request.resolver_match.url_name == 'benchmark' %}active{% endif %}" href="{% url 'core:benchmark' country_code %}" id="nav-benchmark">
                 <span class="nav-status" id="status-benchmark">⚪</span> Benchmark
             </a>
-            <a class="nav-link {% if request.resolver_match.url_name == 'documentation_helper' %}active{% endif %}" href="{% url 'core:documentation_helper' %}" id="nav-documentation_helper">
+            <a class="nav-link {% if request.resolver_match.url_name == 'documentation_helper' %}active{% endif %}" href="{% url 'core:documentation_helper' country_code %}" id="nav-documentation_helper">
                 <span class="nav-status" id="status-documentation_helper">⚪</span> Documentation Helper
             </a>
         </nav>
@@ -190,14 +193,14 @@
         window.handleBaseModelChange = () => {
             const select = document.getElementById('baseModelSelect');
             const selectedModelId = select.value;
-            
+
             // Get current page URL without parameters
             const currentPath = window.location.pathname;
-            
+
             // Add base_model parameter to current URL
             const url = new URL(window.location.href);
             url.searchParams.set('base_model', selectedModelId);
-            
+
             // Reload the page with the new base_model parameter
             window.location.href = url.toString();
         };

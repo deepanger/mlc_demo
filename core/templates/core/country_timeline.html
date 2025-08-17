@@ -1,0 +1,41 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}{{ country.name }} Timeline{% endblock %}
+{% block page_title %}{{ country.name }} · Model Timeline{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12 col-lg-10">
+      <div class="timeline">
+        {% for m in milestones %}
+        <div class="timeline-item {{ m.status }}">
+          <div class="timeline-marker"></div>
+          <div class="timeline-content">
+            <span class="badge bg-secondary">{{ m.date }}</span>
+            <h5 class="mt-2 mb-1">{{ m.title }}</h5>
+            <p class="text-muted mb-0">{{ m.desc }}</p>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  <div class="mt-4">
+  <a class="btn btn-outline-secondary" href="{% url 'core:home' %}">Back to countries</a>
+  <a class="btn btn-primary" href="{% url 'core:country_retrain' country_code %}?base_model={{ selected_model_id }}">Go to Retraining</a>
+  </div>
+</div>
+
+<style>
+.timeline { position: relative; margin-left: 1rem; padding-left: 1.25rem; }
+.timeline:before { content: ''; position: absolute; left: 0.5rem; top: 0; bottom: 0; width: 2px; background: #e9ecef; }
+.timeline-item { position: relative; margin-bottom: 1.5rem; }
+.timeline-marker { position: absolute; left: -0.1rem; top: 0.25rem; width: 10px; height: 10px; background: #0d6efd; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 2px #0d6efd; }
+.timeline-item.retrained .timeline-marker { background: #198754; box-shadow: 0 0 0 2px #198754; }
+.timeline-item.alert .timeline-marker { background: #dc3545; box-shadow: 0 0 0 2px #dc3545; }
+.timeline-item.current .timeline-marker { background: #0d6efd; box-shadow: 0 0 0 2px #0d6efd; }
+.timeline-content { margin-left: 1rem; }
+</style>
+{% endblock %}

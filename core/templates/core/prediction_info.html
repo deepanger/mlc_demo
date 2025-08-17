@@ -7,7 +7,7 @@
 
 {% block content %}
 <form
-    hx-post="{% url 'core:prediction_info' %}"
+    hx-post="{% url 'core:prediction_info' country_code %}"
     hx-target="#run-details-container"
     hx-swap="innerHTML"
     class="mb-4">

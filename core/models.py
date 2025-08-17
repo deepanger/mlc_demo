@@ -17,6 +17,7 @@ class AnalysisRun(models.Model):
     A run_id corresponds to one analysis session.
     """
     base_model = models.ForeignKey(BaseModel, on_delete=models.CASCADE, related_name="runs")
+    country = models.CharField(max_length=10, default='uk', help_text="Country code, e.g., uk/hk/mx/sg")
     run_id = models.CharField(max_length=255, help_text="The user-entered run_id")
     # Store some mock metadata
     month = models.CharField(max_length=20, default="2025-07")
@@ -24,7 +25,7 @@ class AnalysisRun(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ('base_model', 'run_id') # run_id is unique for a given model
+        unique_together = ('base_model', 'run_id', 'country') # run_id is unique per model per country
 
     def __str__(self):
-        return f"{self.run_id} for {self.base_model.name}"
+        return f"{self.run_id} for {self.base_model.name} ({self.country})"

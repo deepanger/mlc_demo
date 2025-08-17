@@ -1,0 +1,32 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}{{ country.name }} Retraining{% endblock %}
+{% block page_title %}{{ country.name }} · Retraining & Management{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+  <div class="row g-3">
+  {% for s in shortcuts %}
+      <div class="col-12 col-md-6 col-xl-4">
+    <a class="text-decoration-none" href="{% url s.url_name country_code %}?base_model={{ selected_model_id }}">
+          <div class="card h-100 shadow-sm hover-shadow">
+            <div class="card-body">
+              <h5 class="card-title">{{ s.name }}</h5>
+              <p class="card-text text-muted small mb-0">Open {{ s.name }} to continue the workflow</p>
+            </div>
+          </div>
+        </a>
+      </div>
+    {% endfor %}
+  </div>
+  <div class="mt-4">
+  <a class="btn btn-outline-secondary" href="{% url 'core:home' %}">Back to countries</a>
+  <a class="btn btn-outline-primary" href="{% url 'core:timeline' country_code %}?base_model={{ selected_model_id }}">View timeline</a>
+  </div>
+</div>
+
+<style>
+.hover-shadow:hover { box-shadow: 0 0.5rem 1rem rgba(0,0,0,.15)!important; }
+</style>
+{% endblock %}

@@ -12,6 +12,14 @@ body {
     display: flex;
 }
 
+/* Global Bootstrap theme variables override */
+:root {
+    --bs-primary: #9A2A2A;
+    --bs-primary-rgb: 154, 42, 42;
+    --bs-info: #9A2A2A;          /* align info to theme unless specified */
+    --bs-info-rgb: 154, 42, 42;
+}
+
 .sidebar {
     width: 250px;
     background-color: #ffffff;
@@ -89,6 +97,39 @@ h2 {
 .btn-primary:hover {
     background-color: #b03030;
     border-color: #b03030;
+}
+.card.border-primary { border-color: #9A2A2A !important; }
+.card-header.bg-primary { background-color: #9A2A2A !important; }
+.card-header.bg-primary .card-title, .card-header.bg-primary h6, .card-header.bg-primary h5 {
+    color: #ffffff !important;
+}
+
+/* Theme unification: map Bootstrap primary/info utilities to theme color */
+.bg-primary { background-color: #9A2A2A !important; }
+.border-primary { border-color: #9A2A2A !important; }
+.text-primary { color: #9A2A2A !important; }
+
+.btn-outline-primary {
+    color: #9A2A2A;
+    border-color: #9A2A2A;
+}
+.btn-outline-primary:hover {
+    color: #ffffff;
+    background-color: #9A2A2A;
+    border-color: #9A2A2A;
+}
+
+/* Treat info as secondary brand tint -> align to primary theme color */
+.text-info { color: #9A2A2A !important; }
+.badge.bg-info { background-color: #9A2A2A !important; }
+.btn-outline-info {
+    color: #9A2A2A;
+    border-color: #9A2A2A;
+}
+.btn-outline-info:hover {
+    color: #ffffff;
+    background-color: #9A2A2A;
+    border-color: #9A2A2A;
 }
 
 .card {
