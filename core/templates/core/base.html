@@ -26,15 +26,39 @@
         </div>
 
         <nav class="nav flex-column">
-            <a class="nav-link {% if request.resolver_match.url_name == 'prediction_info' %}active{% endif %}" href="{% url 'core:prediction_info' %}">Prediction Information</a>
-            <a class="nav-link {% if request.resolver_match.url_name == 'transaction_analysis' %}active{% endif %}" href="{% url 'core:transaction_analysis' %}">Transaction Analysis</a>
-            <a class="nav-link {% if request.resolver_match.url_name == 'target_analysis' %}active{% endif %}" href="{% url 'core:target_analysis' %}">Target Analysis</a>
-            <a class="nav-link {% if request.resolver_match.url_name == 'model_proving' %}active{% endif %}" href="{% url 'core:model_proving' %}">Model Proving</a>
-            <a class="nav-link {% if request.resolver_match.url_name == 'forecasting' %}active{% endif %}" href="{% url 'core:forecasting' %}">Forecasting</a>
-            <a class="nav-link {% if request.resolver_match.url_name == 'btl_analysis' %}active{% endif %}" href="{% url 'core:btl_analysis' %}">BTL Analysis</a>
-            <a class="nav-link {% if request.resolver_match.url_name == 'benchmark' %}active{% endif %}" href="{% url 'core:benchmark' %}">Benchmark</a>
-            <a class="nav-link {% if request.resolver_match.url_name == 'documentation_helper' %}active{% endif %}" href="{% url 'core:documentation_helper' %}">Documentation Helper</a>
+            <a class="nav-link {% if request.resolver_match.url_name == 'prediction_info' %}active{% endif %}" href="{% url 'core:prediction_info' %}" id="nav-prediction_info">
+                <span class="nav-status" id="status-prediction_info">⚪</span> Prediction Information
+            </a>
+            <a class="nav-link {% if request.resolver_match.url_name == 'transaction_analysis' %}active{% endif %}" href="{% url 'core:transaction_analysis' %}" id="nav-transaction_analysis">
+                <span class="nav-status" id="status-transaction_analysis">⚪</span> Transaction Analysis
+            </a>
+            <a class="nav-link {% if request.resolver_match.url_name == 'target_analysis' %}active{% endif %}" href="{% url 'core:target_analysis' %}" id="nav-target_analysis">
+                <span class="nav-status" id="status-target_analysis">⚪</span> Target Analysis
+            </a>
+            <a class="nav-link {% if request.resolver_match.url_name == 'model_proving' %}active{% endif %}" href="{% url 'core:model_proving' %}" id="nav-model_proving">
+                <span class="nav-status" id="status-model_proving">⚪</span> Model Proving
+            </a>
+            <a class="nav-link {% if request.resolver_match.url_name == 'forecasting' %}active{% endif %}" href="{% url 'core:forecasting' %}" id="nav-forecasting">
+                <span class="nav-status" id="status-forecasting">⚪</span> Forecasting
+            </a>
+            <a class="nav-link {% if request.resolver_match.url_name == 'btl_analysis' %}active{% endif %}" href="{% url 'core:btl_analysis' %}" id="nav-btl_analysis">
+                <span class="nav-status" id="status-btl_analysis">⚪</span> BTL Analysis
+            </a>
+            <a class="nav-link {% if request.resolver_match.url_name == 'benchmark' %}active{% endif %}" href="{% url 'core:benchmark' %}" id="nav-benchmark">
+                <span class="nav-status" id="status-benchmark">⚪</span> Benchmark
+            </a>
+            <a class="nav-link {% if request.resolver_match.url_name == 'documentation_helper' %}active{% endif %}" href="{% url 'core:documentation_helper' %}" id="nav-documentation_helper">
+                <span class="nav-status" id="status-documentation_helper">⚪</span> Documentation Helper
+            </a>
         </nav>
+
+        <!-- Debug/Reset Progress (for testing) -->
+        <div class="mt-4 pt-3" style="border-top: 1px solid #dee2e6;">
+            <button class="btn btn-outline-secondary btn-sm w-100" onclick="resetMLCProgress()"
+                    title="Reset pipeline progress for testing">
+                <i class="fas fa-redo"></i> Reset Progress
+            </button>
+        </div>
     </div>
 
     <main class="main-content">
@@ -47,5 +71,125 @@
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Progress Tracking System -->
+    <script>
+        // Progress tracking functionality
+        class ProgressTracker {
+            constructor() {
+                this.storageKey = 'mlc_progress_tracking';
+                this.loadProgress();
+                this.initializeTracking();
+            }
+
+            // Load saved progress from localStorage
+            loadProgress() {
+                const saved = localStorage.getItem(this.storageKey);
+                this.progress = saved ? JSON.parse(saved) : {};
+                this.updateNavigationStatus();
+            }
+
+            // Save progress to localStorage
+            saveProgress() {
+                localStorage.setItem(this.storageKey, JSON.stringify(this.progress));
+            }
+
+            // Mark a step as completed
+            markCompleted(stepName) {
+                this.progress[stepName] = {
+                    completed: true,
+                    timestamp: new Date().toISOString()
+                };
+                this.saveProgress();
+                this.updateNavigationStatus();
+                console.log(`Step completed: ${stepName}`);
+            }
+
+            // Update navigation status indicators
+            updateNavigationStatus() {
+                Object.keys(this.progress).forEach(stepName => {
+                    const statusElement = document.getElementById(`status-${stepName}`);
+                    const navElement = document.getElementById(`nav-${stepName}`);
+                    if (statusElement && this.progress[stepName].completed) {
+                        statusElement.textContent = '✅';
+                        statusElement.style.color = '#28a745';
+                        if (navElement) {
+                            navElement.classList.add('completed');
+                        }
+                    }
+                });
+            }
+
+            // Initialize tracking for buttons on current page
+            initializeTracking() {
+                // Define key action buttons for each page
+                const pageActions = {
+                    'prediction_info': ['button[type="submit"]', '#load-run-details'],
+                    'transaction_analysis': ['button[type="submit"]'],
+                    'target_analysis': ['button[type="submit"]'],
+                    'model_proving': ['.btn-primary'],
+                    'forecasting': ['.btn-primary'],
+                    'btl_analysis': ['#generateDoc', '.btn-primary'],
+                    'benchmark': ['button[onclick="runBenchmark()"]'],
+                    'documentation_helper': ['.btn-primary']
+                };
+
+                // Get current page name
+                const currentPath = window.location.pathname;
+                let currentPage = 'prediction_info'; // default
+
+                if (currentPath.includes('transaction-analysis')) currentPage = 'transaction_analysis';
+                else if (currentPath.includes('target-analysis')) currentPage = 'target_analysis';
+                else if (currentPath.includes('model-proving')) currentPage = 'model_proving';
+                else if (currentPath.includes('forecasting')) currentPage = 'forecasting';
+                else if (currentPath.includes('btl-analysis')) currentPage = 'btl_analysis';
+                else if (currentPath.includes('benchmark')) currentPage = 'benchmark';
+                else if (currentPath.includes('documentation-helper')) currentPage = 'documentation_helper';
+
+                // Add event listeners to relevant buttons
+                if (pageActions[currentPage]) {
+                    pageActions[currentPage].forEach(selector => {
+                        document.addEventListener('DOMContentLoaded', () => {
+                            const buttons = document.querySelectorAll(selector);
+                            buttons.forEach(button => {
+                                button.addEventListener('click', () => {
+                                    this.markCompleted(currentPage);
+                                });
+                            });
+                        });
+                    });
+                }
+            }
+
+            // Reset all progress (for testing/demo)
+            resetProgress() {
+                this.progress = {};
+                this.saveProgress();
+                location.reload();
+            }
+
+            // Get completion percentage
+            getCompletionPercentage() {
+                const totalSteps = 8;
+                const completedSteps = Object.keys(this.progress).length;
+                return Math.round((completedSteps / totalSteps) * 100);
+            }
+        }
+
+        // Initialize progress tracker
+        window.progressTracker = new ProgressTracker();
+
+        // Add global function to reset progress (for testing)
+        window.resetMLCProgress = () => {
+            if (confirm('Are you sure you want to reset all progress?')) {
+                window.progressTracker.resetProgress();
+            }
+        };
+
+        // Display completion percentage in console for debugging
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log(`MLC Pipeline Completion: ${window.progressTracker.getCompletionPercentage()}%`);
+        });
+    </script>
 </body>
 </html>

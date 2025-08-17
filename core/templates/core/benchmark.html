@@ -196,6 +196,11 @@ function runBenchmark() {
     document.getElementById('noBenchmark').style.display = 'none';
     document.getElementById('benchmarkResults').style.display = 'block';
     document.getElementById('selectedRun').textContent = runId.toUpperCase();
+
+    // Mark benchmark step as completed in progress tracker
+    if (window.progressTracker) {
+        window.progressTracker.markCompleted('benchmark');
+    }
 }
 </script>
 {% endblock %}

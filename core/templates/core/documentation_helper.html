@@ -226,6 +226,25 @@
 document.getElementById('generateDoc').addEventListener('click', function() {
     document.getElementById('sampleContent').style.display = 'block';
     document.querySelector('.text-center.text-muted').style.display = 'none';
+
+    // Mark documentation step as completed in progress tracker
+    if (window.progressTracker) {
+        window.progressTracker.markCompleted('documentation_helper');
+    }
+});
+
+// Also track AI Writing Assistant usage
+document.addEventListener('DOMContentLoaded', function() {
+    const aiButtons = document.querySelectorAll('.btn-primary');
+    aiButtons.forEach(button => {
+        if (button.textContent.includes('Generate with AI')) {
+            button.addEventListener('click', function() {
+                if (window.progressTracker) {
+                    window.progressTracker.markCompleted('documentation_helper');
+                }
+            });
+        }
+    });
 });
 </script>
 {% endblock %}

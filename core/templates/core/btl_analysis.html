@@ -206,6 +206,11 @@ function showCalculator() {
 function calculate() {
     // This would contain the actual calculation logic
     showResults();
+
+    // Mark BTL analysis step as completed in progress tracker
+    if (window.progressTracker) {
+        window.progressTracker.markCompleted('btl_analysis');
+    }
 }
 
 function showResults() {
