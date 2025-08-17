@@ -157,41 +157,100 @@ def target_analysis_view(request):
 
 def model_proving_view(request):
     base_models = BaseModel.objects.all()
+    
+    # Get selected base model from request or default to first
+    selected_model_id = request.GET.get('base_model')
+    if selected_model_id:
+        try:
+            selected_model = BaseModel.objects.get(id=selected_model_id)
+        except BaseModel.DoesNotExist:
+            selected_model = base_models.first()
+    else:
+        selected_model = base_models.first()
+    
     context = {
         'base_models': base_models,
-        'selected_model_id': base_models.first().id if base_models else None,
+        'selected_model_id': selected_model.id if selected_model else None,
     }
     return render(request, 'core/model_proving.html', context)
 
 def forecasting_view(request):
     base_models = BaseModel.objects.all()
+    
+    # Get selected base model from request or default to first
+    selected_model_id = request.GET.get('base_model')
+    if selected_model_id:
+        try:
+            selected_model = BaseModel.objects.get(id=selected_model_id)
+        except BaseModel.DoesNotExist:
+            selected_model = base_models.first()
+    else:
+        selected_model = base_models.first()
+    
     context = {
         'base_models': base_models,
-        'selected_model_id': base_models.first().id if base_models else None,
+        'selected_model_id': selected_model.id if selected_model else None,
     }
     return render(request, 'core/forecasting.html', context)
 
 def btl_analysis_view(request):
     base_models = BaseModel.objects.all()
+    
+    # Get selected base model from request or default to first
+    selected_model_id = request.GET.get('base_model')
+    if selected_model_id:
+        try:
+            selected_model = BaseModel.objects.get(id=selected_model_id)
+        except BaseModel.DoesNotExist:
+            selected_model = base_models.first()
+    else:
+        selected_model = base_models.first()
+    
     context = {
         'base_models': base_models,
-        'selected_model_id': base_models.first().id if base_models else None,
+        'selected_model_id': selected_model.id if selected_model else None,
     }
     return render(request, 'core/btl_analysis.html', context)
 
 def benchmark_view(request):
     base_models = BaseModel.objects.all()
+    
+    # Get selected base model from request or default to first
+    selected_model_id = request.GET.get('base_model')
+    if selected_model_id:
+        try:
+            selected_model = BaseModel.objects.get(id=selected_model_id)
+        except BaseModel.DoesNotExist:
+            selected_model = base_models.first()
+    else:
+        selected_model = base_models.first()
+    
+    # Get runs for selected model for the benchmark dropdown
+    runs = AnalysisRun.objects.filter(base_model=selected_model).order_by('-created_at')
+    
     context = {
         'base_models': base_models,
-        'selected_model_id': base_models.first().id if base_models else None,
+        'selected_model_id': selected_model.id if selected_model else None,
+        'runs': runs,
     }
     return render(request, 'core/benchmark.html', context)
 
 def documentation_helper_view(request):
     base_models = BaseModel.objects.all()
+    
+    # Get selected base model from request or default to first
+    selected_model_id = request.GET.get('base_model')
+    if selected_model_id:
+        try:
+            selected_model = BaseModel.objects.get(id=selected_model_id)
+        except BaseModel.DoesNotExist:
+            selected_model = base_models.first()
+    else:
+        selected_model = base_models.first()
+    
     context = {
         'base_models': base_models,
-        'selected_model_id': base_models.first().id if base_models else None,
+        'selected_model_id': selected_model.id if selected_model else None,
     }
     return render(request, 'core/documentation_helper.html', context)
 

@@ -28,10 +28,11 @@
                             <label for="runId" class="form-label">Select Run ID</label>
                             <select class="form-select" id="runId">
                                 <option value="">Select a run...</option>
-                                <option value="run_001">RUN_001 - AML v2.1</option>
-                                <option value="run_002">RUN_002 - AML v2.0</option>
-                                <option value="run_003">RUN_003 - AML v1.9</option>
-                                <option value="baseline">BASELINE - Standard Model</option>
+                                {% for run in runs %}
+                                    <option value="{{ run.run_id }}">{{ run.run_id }} - {{ run.base_model.name }}</option>
+                                {% empty %}
+                                    <option value="" disabled>No runs available for this model</option>
+                                {% endfor %}
                             </select>
                         </div>
                     </div>

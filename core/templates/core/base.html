@@ -16,7 +16,7 @@
 
         <div class="mb-4">
             <label for="baseModelSelect" class="form-label">Base Model</label>
-            <select class="form-select" id="baseModelSelect">
+            <select class="form-select" id="baseModelSelect" onchange="handleBaseModelChange()">
                 {% for model in base_models %}
                     <option value="{{ model.id }}" {% if model.id == selected_model_id %}selected{% endif %}>
                         {{ model.name }}
@@ -184,6 +184,22 @@
             if (confirm('Are you sure you want to reset all progress?')) {
                 window.progressTracker.resetProgress();
             }
+        };
+
+        // Handle Base Model change
+        window.handleBaseModelChange = () => {
+            const select = document.getElementById('baseModelSelect');
+            const selectedModelId = select.value;
+            
+            // Get current page URL without parameters
+            const currentPath = window.location.pathname;
+            
+            // Add base_model parameter to current URL
+            const url = new URL(window.location.href);
+            url.searchParams.set('base_model', selectedModelId);
+            
+            // Reload the page with the new base_model parameter
+            window.location.href = url.toString();
         };
 
         // Display completion percentage in console for debugging
