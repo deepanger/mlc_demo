@@ -9,19 +9,19 @@ import re
 SUPPORTED_COUNTRIES = {
     'uk': {
         'name': 'United Kingdom',
-        'flag': 'core/placeholder_chart.png',
+    'flag': 'core/vendor/flags/uk.png',
     },
     'hk': {
         'name': 'Hong Kong',
-        'flag': 'core/placeholder_chart.png',
+    'flag': 'core/vendor/flags/hk.png',
     },
     'mx': {
         'name': 'Mexico',
-        'flag': 'core/placeholder_chart.png',
+    'flag': 'core/vendor/flags/mx.png',
     },
     'sg': {
         'name': 'Singapore',
-        'flag': 'core/placeholder_chart.png',
+    'flag': 'core/vendor/flags/sg.png',
     }
 }
 

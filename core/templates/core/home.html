@@ -10,20 +10,45 @@
   <style>
     body { background:#fafafa; }
     header { padding: 2rem 0; }
-  .country-img { width: 140px; height: 140px; object-fit: cover; border-radius: 12px; border:1px solid #eee; box-shadow: 0 2px 8px rgba(0,0,0,.06); }
-  @media (min-width: 1200px){ .country-img { width: 160px; height:160px; } }
-  .country-actions .btn { min-width: auto; }
+    .country-img { width: 140px; height: 140px; object-fit: cover; border-radius: 50%; border:1px solid #eee; box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+    @media (min-width: 1200px){ .country-img { width: 160px; height:160px; } }
+    .country-actions .btn { min-width: auto; }
+
+    /* Scheme A: header accent and divider */
+    .landing-hero header h1 { position: relative; padding-left: 14px; }
+    .landing-hero header h1::before { content: ''; position: absolute; left: 0; top: 2px; bottom: 2px; width: 4px; background: #9A2A2A; border-radius: 2px; }
+    .landing-hero header::after { content: ''; display: block; height: 1px; margin-top: 12px; background: linear-gradient(90deg, rgba(154,42,42,.20), rgba(154,42,42,.08) 30%, rgba(154,42,42,0) 60%); }
+
+    /* Scheme A: card top accent bar */
+    .landing-hero .country-card { position: relative; overflow: hidden; }
+    .landing-hero .country-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: rgba(154,42,42,.20); }
+    .landing-hero .country-card:hover::before { background: #9A2A2A; }
+
+    /* Scheme A: flag double ring focus */
+    .landing-hero .country-img { box-shadow: 0 0 0 4px #fff, 0 0 0 6px rgba(154,42,42,.20), 0 2px 8px rgba(0,0,0,.06); }
+    .landing-hero .country-card:hover .country-img { box-shadow: 0 0 0 4px #fff, 0 0 0 8px rgba(154,42,42,.32), 0 4px 14px rgba(0,0,0,.12); transition: box-shadow .18s ease; }
+
+  /* Section separators (choose one by class on .section-separator) */
+  .landing-hero .section-separator { height: 14px; margin: 10px 0 24px; border-radius: 3px; position: relative; }
+  /* Option A: Diagonal color band (default) */
+  .landing-hero .separator-diagonal { height: 3px; background: linear-gradient(90deg, rgba(154,42,42,.85), rgba(154,42,42,.65)); clip-path: polygon(0 0, 100% 0, 100% 70%, 0 100%); box-shadow: 0 6px 14px rgba(154,42,42,.18); }
+  /* Option B: Dotted motif */
+  .landing-hero .separator-dots { height: 10px; background: radial-gradient(circle at 6px 5px, rgba(154,42,42,.65) 2px, transparent 3px) 0 0/18px 10px repeat-x; opacity: .95; }
+  /* Option C: Double rule */
+  .landing-hero .separator-double { height: 0; border-top: 2px solid rgba(154,42,42,.9); border-bottom: 2px solid rgba(154,42,42,.35); padding-top: 10px; margin-bottom: 26px; border-radius: 0; }
   </style>
   <script src="https://unpkg.com/htmx.org@1.9.10" defer></script>
   <style>
-    .country-card:hover { transform: translateY(-2px); transition: .2s ease; }
+    .country-card:hover { transform: translateY(-4px); transition: transform .18s ease, box-shadow .18s ease; box-shadow: 0 10px 20px rgba(0,0,0,.10)!important; }
   </style>
   </head>
 <body>
-  <div class="container py-4">
+  <div class="container py-4 landing-hero">
     <header class="d-flex justify-content-between align-items-center">
   <h1 class="h3 m-0">Model Lifecycle Center · Global Markets</h1>
     </header>
+  <!-- Visual separator between header and body: switch styles by changing the class below -->
+  <div class="section-separator separator-diagonal" aria-hidden="true"></div>
     <div class="row g-4">
       {% for code, c in countries.items %}
       <div class="col-12 col-md-6 col-xl-3">
