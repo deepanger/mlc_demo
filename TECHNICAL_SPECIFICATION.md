@@ -1,530 +1,541 @@
-# Model Lifecycle Center (MLC) - 技术规格说明书
+# Model Lifecycle Center (MLC) - Technical Specification
 
-## 目录
-1. [项目概述](#1-项目概述)
-2. [业务场景分析](#2-业务场景分析)
-3. [系统架构](#3-系统架构)
-4. [技术栈选择](#4-技术栈选择)
-5. [数据模型设计](#5-数据模型设计)
-6. [用户界面设计](#6-用户界面设计)
-7. [功能模块详述](#7-功能模块详述)
-8. [核心特性](#8-核心特性)
-9. [项目部署](#9-项目部署)
-10. [开发规范](#10-开发规范)
-11. [未来规划](#11-未来规划)
-
----
-
-## 1. 项目概述
-
-### 1.1 背景与问题
-在银行反洗钱（AML）业务中，我们使用Google AML AI平台进行机器学习模型的训练和预测。当前分析流程存在以下问题：
-
-**业务背景**：
-- 使用Google AML AI功能进行模型训练和预测操作
-- 训练结果和预测结果以tables形式存储在BigQuery数据集中
-- 需要定期重新训练模型以适应新的金融犯罪行为模式
-- 每次重训练后需要进行完整的模型验证和分析
-- **新增挑战**：业务扩展到全球多个市场（如英国、香港、新加坡、墨西哥），需要对各市场的模型生命周期进行独立管理和追踪。
-
-**现有痛点**：
-- 分析师需要在Jupyter Notebook中手动输入run_id和其他参数
-- 过程效率低下、易于出错且难以追溯和共享
-- 缺乏统一的分析结果展示和管理平台
-- **新痛点**：缺乏一个全球视角的模型管理入口，无法便捷地在不同市场的分析环境间切换。
-
-### 1.2 解决方案
-Model Lifecycle Center (MLC) 是一个Web应用原型，现已升级为全球模型生命周期管理平台，专为银行AML模型分析场景设计：
-
-**核心价值**：
-- **全球市场入口**：提供一个统一的首页，展示所有支持的国家/地区，作为进入各个市场特定分析环境的门户。
-- **国家级模型生命周期**：为每个国家提供独立的模型时间线（Timeline）和重训练（Retrain）入口。
-- **替代Jupyter Notebook工作流**：将手动输入run_id和参数的过程Web化，并在特定国家的上下文中进行。
-- **自动化数据查询**：集成BigQuery连接，自动执行SQL分析查询（未来规划）。
-- **统一结果展示**：以专业仪表盘形式展示特定国家模型的分析结果。
-
-**技术架构**：
-- **前端Web界面**：提供清晰的全球-国家两级导航结构。
-- **后端数据处理**：Python + Django，处理按国家区分的业务逻辑。
-- **Demo框架设计**：使用模拟数据建立完整架构，预留真实数据接入点。
-- **可扩展设计**：便于未来接入Google AML AI和BigQuery真实数据。
-
-### 1.3 目标用户
-- **AML分析师**：进行各市场模型训练后的分析验证工作。
-- **全球模型管理团队**：需要概览各市场的模型状态，并进行统一协调。
-- **机器学习工程师**：负责各市场模型的重训练和性能监控。
-- **合规团队**：需要查看各市场模型验证结果和合规报告。
-- **风险管理团队**：评估新模型在全球不同市场对金融犯罪检测的有效性。
-
-### 1.4 项目定位
-**Demo性质**：
-- 当前为概念验证和框架搭建阶段
-- 使用模拟数据模拟真实BigQuery查询结果
-- 重点在于建立完整的、分国家的Web化分析流程
-- 为未来接入Google AML AI和BigQuery做准备
-
-**未来扩展**：
-- 集成Google Cloud BigQuery数据源
-- 接入Google AML AI模型训练和预测结果
-- 实现真实的SQL查询和数据分析逻辑
-- 添加跨国模型性能对比功能
+## Table of Contents
+1. [Project Overview](#1-project-overview)
+2. [Business Scenario Analysis](#2-business-scenario-analysis)
+3. [System Architecture](#3-system-architecture)
+4. [Technology Stack](#4-technology-stack)
+5. [Data Model Design](#5-data-model-design)
+6. [User Interface Design](#6-user-interface-design)
+7. [Feature Modules](#7-feature-modules)
+8. [Core Features](#8-core-features)
+9. [Project Deployment](#9-project-deployment)
+10. [Development Standards](#10-development-standards)
+11. [Future Roadmap](#11-future-roadmap)
 
 ---
 
-## 2. 业务场景分析
+## 1. Project Overview
 
-### 2.1 真实业务流程
+### 1.1 Background & Problems
+In banking Anti-Money Laundering (AML) operations, we utilize Google AML AI platform for machine learning model training and prediction. The current analysis workflow faces several challenges:
+
+**Business Context**:
+- Using Google AML AI functionality for model training and prediction operations
+- Training and prediction results are stored as tables in BigQuery datasets
+- Need to periodically retrain models to adapt to new financial crime behavior patterns
+- Complete model validation and analysis required after each retraining
+- **New Challenge**: Business expansion to global markets (UK, Hong Kong, Singapore, Mexico) requires independent management and tracking of model lifecycles across different markets.
+
+**Current Pain Points**:
+- Analysts need to manually input run_id and other parameters in Jupyter Notebooks
+- Process is inefficient, error-prone, and difficult to trace and share
+- Lack of unified platform for analysis result presentation and management
+- **New Pain Point**: Missing a global perspective for model management entry point, unable to conveniently switch between different market analysis environments.
+
+### 1.2 Solution
+Model Lifecycle Center (MLC) is a web application prototype, now upgraded to a global model lifecycle management platform, specifically designed for banking AML model analysis scenarios:
+
+**Core Value**:
+- **Global Market Entry**: Provides a unified homepage displaying all supported countries/regions as a portal to enter market-specific analysis environments.
+- **Country-Level Model Lifecycle**: Offers independent model timeline and retraining entry points for each country.
+- **Jupyter Notebook Workflow Replacement**: Web-ifies the manual run_id and parameter input process within specific country contexts.
+- **Automated Data Querying**: Integrates BigQuery connections for automatic SQL analysis query execution (future planning).
+- **Unified Result Display**: Presents country-specific model analysis results in professional dashboard format.
+
+**Technical Architecture**:
+- **Frontend Web Interface**: Provides clear global-to-country two-tier navigation structure.
+- **Backend Data Processing**: Python + Django, handling country-differentiated business logic.
+- **Demo Framework Design**: Uses simulated data to establish complete architecture with real data integration points reserved.
+- **Scalable Design**: Facilitates future integration with Google AML AI and BigQuery real data.
+
+### 1.3 Target Users
+- **AML Analysts**: Conducting analysis and validation work for models after training across different markets.
+- **Global Model Management Teams**: Requiring overview of model states across markets for unified coordination.
+- **Machine Learning Engineers**: Responsible for model retraining and performance monitoring across markets.
+- **Compliance Teams**: Need to view market-specific model validation results and compliance reports.
+- **Risk Management Teams**: Evaluate new model effectiveness in detecting financial crimes across different global markets.
+
+### 1.4 Project Positioning
+**Demo Nature**:
+- Currently in concept validation and framework construction phase
+- Uses simulated data to mimic real BigQuery query results
+- Focus on establishing complete country-specific web-based analysis workflows
+- Preparation for future Google AML AI and BigQuery integration
+
+**Future Expansion**:
+- Integration with Google Cloud BigQuery data sources
+- Connection to Google AML AI model training and prediction results
+- Implementation of real SQL query and data analysis logic
+- Addition of cross-country model performance comparison functionality
+
+---
+
+## 2. Business Scenario Analysis
+
+### 2.1 Real Business Workflow
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   全球市场概览  │    │   选择特定市场  │    │   模型生命周期  │
-│                 │    │ (UK, HK, SG, MX)│    │                 │
-│ • 各国入口      │───►│                 │───►│ • 时间线 (Timeline)│
-│ • 统一门户      │    │                 │    │ • 重训练 (Retrain) │
+│ Global Market   │    │ Select Specific │    │ Model Lifecycle │
+│ Overview        │    │ Market          │    │                 │
+│                 │    │ (UK,HK,SG,MX)   │    │                 │
+│ • Country Entry │───►│                 │───►│ • Timeline      │
+│ • Unified Portal│    │                 │    │ • Retrain       │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
                                 │                       │
                        ┌─────────────────┐    ┌─────────────────┐
-                       │   模型分析 (分国家)│    │   结果验证 (分国家)│
-                       │                 │    │                 │
+                       │ Model Analysis  │    │ Result          │
+                       │ (Country-specific)│    │ Validation      │
+                       │                 │    │ (Country-specific)│
                        │ • Prediction Info│───►│ • Transaction   │
-                       │ • Web化参数输入 │    │   Analysis      │
-                       │ • 自动化查询    │    │ • Target Analysis│
+                       │ • Web-based Input│    │   Analysis      │
+                       │ • Automated Query│    │ • Target Analysis│
                        └─────────────────┘    └─────────────────┘
 ```
 
-### 2.2 当前痛点分析
-| 问题类别 | 具体问题 | 影响程度 |
-|----------|----------|----------|
-| **全局管理** | 缺乏统一的全球市场模型入口 | 高 |
-| **效率问题** | 在不同市场的分析环境间切换繁琐 | 高 |
-| **一致性问题** | 不同分析师可能使用不同的查询逻辑 | 中 |
-| **可追溯性** | 分析结果依赖截图，难以追溯和复现 | 高 |
-| **协作问题** | 结果分享依赖文档整理，效率低下 | 中 |
+### 2.2 Current Pain Point Analysis
+| Problem Category | Specific Issues | Impact Level |
+|------------------|-----------------|--------------|
+| **Global Management** | Lack of unified global market model entry | High |
+| **Efficiency Issues** | Cumbersome switching between different market analysis environments | High |
+| **Consistency Issues** | Different analysts may use different query logic | Medium |
+| **Traceability** | Analysis results depend on screenshots, hard to trace and reproduce | High |
+| **Collaboration Issues** | Result sharing depends on document organization, low efficiency | Medium |
 
-### 2.3 解决方案价值
-| 改进点 | 现状 | 目标 |
-|--------|------|------|
-| **全局导航** | 无 | 统一的全球市场入口页 |
-| **参数输入** | 手动在Notebook中修改 | Web表单化输入（按国家区分） |
-| **数据查询** | 每次手动执行SQL | 自动化后台查询（按国家区分） |
-| **结果展示** | 截图+手动整理 | 统一Web仪表盘（按国家区分） |
-| **流程标准化** | 依赖个人经验 | 标准化、分国家的分析流程 |
+### 2.3 Solution Value
+| Improvement | Current State | Target |
+|-------------|---------------|--------|
+| **Global Navigation** | None | Unified global market entry page |
+| **Parameter Input** | Manual modification in Notebooks | Web form input (country-specific) |
+| **Data Querying** | Manual SQL execution each time | Automated backend queries (country-specific) |
+| **Result Display** | Screenshots + manual organization | Unified web dashboard (country-specific) |
+| **Process Standardization** | Depends on personal experience | Standardized, country-specific analysis workflows |
 
 ---
 
-## 3. 系统架构
+## 3. System Architecture
 
-### 3.1 整体架构
-**当前Demo架构**：
+### 3.1 Overall Architecture
+**Current Demo Architecture**:
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   前端界面      │    │   Django后端    │    │   模拟数据      │
-│ (全球/国家两级) │    │                 │    │                 │
-│ • Bootstrap UI  │◄──►│ • 视图逻辑(分国家)│◄──►│ • SQLite数据库  │
-│ • 响应式设计    │    │ • 业务逻辑      │    │ • 模拟BigQuery  │
-│ • HTMX交互      │    │ • 数据分析      │    │   查询结果      │
+│ Frontend UI     │    │ Django Backend  │    │ Simulated Data  │
+│ (Global/Country │    │                 │    │                 │
+│ Two-tier)       │    │                 │    │                 │
+│ • Bootstrap UI  │◄──►│ • View Logic    │◄──►│ • SQLite DB     │
+│ • Responsive    │    │   (Country-     │    │ • Mock BigQuery │
+│   Design        │    │   specific)     │    │   Results       │
+│ • HTMX          │    │ • Business Logic│    │                 │
+│   Interaction   │    │ • Data Analysis │    │                 │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
                                 │
                        ┌─────────────────┐
-                       │   分析引擎      │
+                       │ Analysis Engine │
                        │                 │
-                       │ • Pandas处理    │
-                       │ • Matplotlib图表│
-                       │ • 模拟SQL逻辑   │
+                       │ • Pandas        │
+                       │   Processing    │
+                       │ • Matplotlib    │
+                       │   Charts        │
+                       │ • Mock SQL Logic│
                        └─────────────────┘
 ```
 
-**未来目标架构**：
+**Future Target Architecture**:
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   前端界面      │    │   Django后端    │    │  Google Cloud   │
+│ Frontend UI     │    │ Django Backend  │    │ Google Cloud    │
 │                 │    │                 │    │                 │
-│ • 统一分析界面  │◄──►│ • 参数验证      │◄──►│ • BigQuery      │
-│ • 实时结果展示  │    │ • SQL查询引擎   │    │ • AML AI Tables │
-│ • 历史记录管理  │    │ • 数据处理      │    │ • Train/Predict │
-└─────────────────┘    └─────────────────┘    │   Run Results   │
-                                │              └─────────────────┘
+│ • Unified       │◄──►│ • Parameter     │◄──►│ • BigQuery      │
+│   Analysis UI   │    │   Validation    │    │ • AML AI Tables │
+│ • Real-time     │    │ • SQL Query     │    │ • Train/Predict │
+│   Results       │    │   Engine        │    │   Run Results   │
+│ • History Mgmt  │    │ • Data          │    │                 │
+└─────────────────┘    │   Processing    │    └─────────────────┘
+                       └─────────────────┘
+                                │
                        ┌─────────────────┐
-                       │   分析引擎      │
+                       │ Analysis Engine │
                        │                 │
-                       │ • 真实SQL查询   │
-                       │ • 数据聚合分析  │
-                       │ • 自动化图表    │
+                       │ • Real SQL      │
+                       │   Queries       │
+                       │ • Data          │
+                       │   Aggregation   │
+                       │ • Automated     │
+                       │   Charts        │
                        └─────────────────┘
 ```
 
-### 3.2 应用层次
-**当前Demo实现**：
-- **表现层**：Bootstrap + 自定义CSS + HTMX，实现全球入口和分国家的两级响应式Web界面。
-- **业务层**：Django视图和表单处理，按国家代码处理数据验证和业务流。
-- **数据层**：Django ORM + SQLite，`AnalysisRun`模型通过`country`字段模拟分国家的数据结构。
-- **分析层**：Pandas数据处理 + Matplotlib图表生成，模拟SQL分析逻辑。
+### 3.2 Application Layers
+**Current Demo Implementation**:
+- **Presentation Layer**: Bootstrap + Custom CSS + HTMX, implementing global entry and country-specific two-tier responsive web interface.
+- **Business Layer**: Django views and form processing, handling data validation and business flow by country code.
+- **Data Layer**: Django ORM + SQLite, `AnalysisRun` model simulating country-specific data structure through `country` field.
+- **Analysis Layer**: Pandas data processing + Matplotlib chart generation, simulating SQL analysis logic.
 
-### 3.3 数据流设计
-**模拟数据流（当前）**：
+### 3.3 Data Flow Design
+**Simulated Data Flow (Current)**:
 ```
-用户选择国家 → 进入国家级页面 → 用户输入run_id → 哈希生成种子 → 模拟数据生成 → 图表渲染 → Web展示
+User selects country → Enter country-level page → User inputs run_id → Hash generates seed → Simulated data generation → Chart rendering → Web display
 ```
 
-**真实数据流（目标）**：
+**Real Data Flow (Target)**:
 ```
-用户选择国家 → 用户输入run_id → 参数验证 → BigQuery查询（含国家过滤） → 数据聚合分析 → 图表生成 → Web展示
+User selects country → User inputs run_id → Parameter validation → BigQuery query (with country filter) → Data aggregation analysis → Chart generation → Web display
 ```
 
 ---
 
-## 4. 技术栈选择
+## 4. Technology Stack
 
-### 4.1 后端技术
-| 技术 | 版本 | 用途 |
-|------|------|------|
-| Django | 5.2.5 | Web框架，提供ORM、路由、模板系统 |
-| SQLite | 内置 | 轻量级数据库，适合原型开发 |
-| Python | 3.12.7 | 主要编程语言 |
+### 4.1 Backend Technologies
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| Django | 5.2.5 | Web framework providing ORM, routing, template system |
+| SQLite | Built-in | Lightweight database suitable for prototype development |
+| Python | 3.12.7 | Primary programming language |
 
-### 4.2 前端技术
-| 技术 | 版本 | 用途 |
-|------|------|------|
-| Bootstrap | 5.3.3 | 响应式UI框架 |
-| django-crispy-forms | 2.x | 表单美化和验证 |
-| htmx | 1.9.10 | 提升页面局部刷新和交互体验 |
-| 原生JavaScript | ES6+ | 基础交互功能，如进度追踪 |
+### 4.2 Frontend Technologies
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| Bootstrap | 5.3.3 | Responsive UI framework |
+| django-crispy-forms | 2.x | Form beautification and validation |
+| htmx | 1.9.10 | Enhanced page partial refresh and interaction experience |
+| Vanilla JavaScript | ES6+ | Basic interaction functionality like progress tracking |
 
-### 4.3 数据分析技术
-| 技术 | 版本 | 用途 |
-|------|------|------|
-| Pandas | 2.0+ | 数据处理和表格生成 |
-| Matplotlib | 3.7+ | 图表绘制和可视化 |
-| NumPy | 1.24+ | 数值计算支持 |
+### 4.3 Data Analysis Technologies
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| Pandas | 2.0+ | Data processing and table generation |
+| Matplotlib | 3.7+ | Chart drawing and visualization |
+| NumPy | 1.24+ | Numerical computation support |
 
-### 4.4 开发工具
-| 工具 | 用途 |
-|------|------|
-| uv | Python包管理器 |
-| pyproject.toml | 项目配置管理 |
-| Black | 代码格式化 |
-| Flake8 | 代码质量检查 |
+### 4.4 Development Tools
+| Tool | Purpose |
+|------|---------|
+| uv | Python package manager |
+| pyproject.toml | Project configuration management |
+| Black | Code formatting |
+| Flake8 | Code quality checking |
 
 ---
 
-## 5. 数据模型设计
+## 5. Data Model Design
 
-### 5.1 核心实体
+### 5.1 Core Entities
 
-#### BaseModel (基础模型)
+#### Country
 ```python
-class BaseModel(models.Model):
+class Country(models.Model):
     name = models.CharField(max_length=100, unique=True)
-    description = models.TextField(blank=True, null=True)
+    code = models.CharField(max_length=3, unique=True)
+    flag_emoji = models.CharField(max_length=10)
     created_at = models.DateTimeField(auto_now_add=True)
 ```
 
-#### AnalysisRun (分析运行)
+#### BaseModel
+```python
+class BaseModel(models.Model):
+    name = models.CharField(max_length=100)
+    country = models.ForeignKey(Country, on_delete=models.CASCADE)
+    description = models.TextField(blank=True, null=True)
+    current_status = models.CharField(max_length=20, choices=[...])
+    created_at = models.DateTimeField(auto_now_add=True)
+```
+
+#### AnalysisRun
 ```python
 class AnalysisRun(models.Model):
     base_model = models.ForeignKey(BaseModel, on_delete=models.CASCADE)
-    country = models.CharField(max_length=10, default='uk', help_text="Country code, e.g., uk/hk/mx/sg")
     run_id = models.CharField(max_length=255)
     month = models.CharField(max_length=20, default="2025-07")
     customer_count = models.IntegerField(default=10000)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ('base_model', 'run_id', 'country')
+        unique_together = ('base_model', 'run_id')
 ```
 
-### 4.2 数据关系
-- 一个基础模型可以有多个分析运行。
-- 每个`run_id`在同一基础模型和同一国家的组合下是唯一的。
-- 支持跨国家的`run_id`重复（例如，英国和香港可以有相同的`run_id`）。
+#### ModelEvent
+```python
+class ModelEvent(models.Model):
+    model = models.ForeignKey(BaseModel, on_delete=models.CASCADE)
+    event_type = models.CharField(max_length=20, choices=[...])
+    event_date = models.DateTimeField()
+    description = models.TextField()
+    version = models.CharField(max_length=50, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+```
+
+### 5.2 Data Relationships
+- Each country can have multiple base models
+- Each base model can have multiple analysis runs and model events
+- `run_id` is unique within the same base model
+- Supports cross-country data isolation and management
 
 ---
 
-## 6. 用户界面设计
+## 6. User Interface Design
 
-### 6.1 整体布局
-应用包含两种主要布局：
+### 6.1 Overall Layout
+The application contains two main layout types:
 
-**1. 全球入口页 (`/`)**
+**1. Global Entry Page (`/`)**
 ```
 ┌─────────────────────────────────────────────────┐
-│                页面标题栏                        │
-│        Model Lifecycle Center · Global Markets │
+│          Model Lifecycle Center                 │
+│        Global Model Management Portal          │
 ├─────────────────────────────────────────────────┤
 │                                                 │
-│                 主内容区 (无侧边栏)              │
+│              Statistics Overview                │
 │                                                 │
-│        • 四个国家卡片 (UK, HK, MX, SG)         │
-│        • 每个卡片包含 "Timeline" 和 "Retrain" 链接 │
+│        • Four Country Cards (UK,HK,MX,SG)      │
+│        • Each card contains "Timeline" and      │
+│          "Training" links                       │
 │                                                 │
 └─────────────────────────────────────────────────┘
 ```
 
-**2. 国家级分析页 (`/<country_code>/...`)**
+**2. Country-Level Analysis Pages (`/<country_code>/...`)**
 ```
 ┌─────────────────────────────────────────────────┐
-│                页面标题栏                        │
+│             Country Name + Flag                 │
 │            Model Lifecycle Center              │
 ├─────────────┬───────────────────────────────────┤
-│   侧边导航   │                                   │
-│            │                                   │
-│ • 基础模型   │            主内容区                │
-│   选择器    │                                   │
-│            │        • 表单和数据               │
-│ • 页面导航   │        • 图表和表格               │
-│   - Timeline (新增) │        • 分析结果                │
-│   - 预测信息 │                                   │
-│   - ...    │                                   │
+│ Side        │                                   │
+│ Navigation  │                                   │
+│             │            Main Content           │
+│ • Global    │                                   │
+│   Dashboard │        • Forms and Data           │
+│ • Model     │        • Charts and Tables       │
+│   Timeline  │        • Analysis Results        │
+│ • Training  │                                   │
+│   Dashboard │                                   │
+│             │                                   │
+│ • Training  │                                   │
+│   Workflow  │                                   │
+│   - Predict │                                   │
+│     Info    │                                   │
+│   - ...     │                                   │
 └─────────────┴───────────────────────────────────┘
 ```
 
-### 6.2 设计主题
-- **主色调**：暗红色 (`#9A2A2A`) 用于标题、按钮和视觉强调元素。
-- **背景色**：浅灰色 (`#fafafa` 或 `#f8f9fa`) 提供清爽的视觉体验。
-- **视觉增强**：首页使用几何分割线、卡片悬停效果、圆形国旗等元素提升设计感。
-- **侧边栏**：白色背景 (`#ffffff`) 带阴影效果。
-
-### 6.3 响应式设计
-- 使用Bootstrap网格系统，确保在桌面、平板和手机上均有良好表现。
-- 首页国家卡片布局会根据屏幕宽度自动调整。
-- 分析页面的表格和图表自适应屏幕尺寸。
+### 6.2 Design Theme
+- **Primary Colors**: Modern gradient color schemes reflecting professionalism
+- **Background Colors**: Light gray series providing fresh visual experience
+- **Visual Enhancement**: Flag emojis, card hover effects, modern icons
+- **Responsive Design**: Bootstrap 5.3.3 ensures cross-device compatibility
 
 ---
 
-## 7. 功能模块详述
+## 7. Feature Modules
 
-### 7.1 Home (全球入口)
-**路径**: `/`
+### 7.1 Global Entry Page (Home)
+**Path**: `/`
 
-**功能特性**:
-- 无需登录的公开访问页面。
-- 以卡片形式展示所有支持的国家/地区（英国、香港、墨西哥、新加坡）。
-- 每个国家卡片包含其国旗、名称以及两个主要操作链接：
-  - **Timeline**: 跳转到该国的模型生命周期时间线页面。
-  - **Retrain**: 跳转到该国的模型重训练快捷入口页面。
-- 页面设计经过美化，包含标题栏、几何分割线和交互式卡片。
+**Features**:
+- Displays all supported countries/regions (UK, Hong Kong, Mexico, Singapore)
+- Each country card contains:
+  - Flag and name
+  - Model timeline link
+  - Model training link
+  - Current active model count
+- Global statistics display
+- Modern design with responsive layout
 
-### 7.2 Country Timeline (国家时间线)
-**路径**: `/<slug:country_code>/timeline/`
+### 7.2 Model Timeline Page
+**Path**: `/<country_code>/timeline/`
 
-**功能特性**:
-- 展示特定国家模型的关键生命周期事件（模拟数据）。
-- 包含侧边栏，允许在不同基础模型间切换。
-- 提供返回全球首页和进入重训练页面的链接。
+**Features**:
+- Displays model lifecycle events for specific country
+- Timeline visualization
+- Includes deployment, retraining, update event types
+- Current model status overview
+- Navigation to global entry and training dashboard
 
-### 7.3 Country Retrain (国家重训练)
-**路径**: `/<slug:country_code>/retrain/`
+### 7.3 Model Training Dashboard
+**Path**: `/<country_code>/training/`
 
-**功能特性**:
-- 作为特定国家所有分析页面的快捷方式中心。
-- 包含侧边栏，允许在不同基础模型间切换。
-- 链接到该国家的所有核心分析页面（如预测信息、交易分析等）。
+**Features**:
+- Country-level training workflow overview
+- Workflow step display
+- Quick action panel
+- Current model management
+- Statistical data display
 
-### 7.4 Prediction Information (预测信息)
-**路径**: `/<slug:country_code>/prediction-info/`
+### 7.4 Training Workflow Pages
+**Path**: `/<country_code>/training/...`
 
-**功能特性**:
-- **国家限定**: 所有操作和数据显示都基于URL中的`country_code`。
-- 基础模型选择器。
-- Run ID批量输入（支持逗号分隔）。
-- 自动显示该国家、该模型下最近5个运行记录。
-- 使用HTMX实现表单提交和结果的局部刷新。
-
-### 7.5 Transaction & Target Analysis (交易与目标分析)
-**路径**: `/<slug:country_code>/transaction-analysis/`, `/<slug:country_code>/target-analysis/`
-
-**功能特性**:
-- **国家限定**: 所有操作和数据显示都基于URL中的`country_code`。
-- 基础模型和Run ID联动选择，下拉框只显示属于当前国家和模型的Run ID。
-- 动态生成和可视化特定国家运行的分析数据。
-
-### 7.6 其他分析页面
-**路径**: `/<slug:country_code>/...`
-
-**功能特性**:
-- 所有其他分析页面（Model Proving, Forecasting等）都已适配国家限定的URL结构。
-- 均包含侧边栏，并能在不同基础模型间切换。
+Includes complete ML training workflow:
+- Prediction Information
+- Transaction Analysis
+- Target Analysis
+- Model Proving
+- Forecasting
+- BTL Calculator
+- Benchmark
+- Documentation
 
 ---
 
-## 8. 核心特性
+## 8. Core Features
 
-### 8.1 多国架构
-- **URL驱动**: 通过URL中的国家代码实现清晰的数据和视图隔离。
-- **数据隔离**: `AnalysisRun`模型中的`country`字段确保了数据的国家归属。
-- **可扩展性**: `SUPPORTED_COUNTRIES`配置使得未来增加新国家变得容易。
+### 8.1 Multi-Country Architecture
+- **URL-Driven**: Data and view isolation through country codes in URLs
+- **Data Isolation**: Independent management of models and analysis data for each country
+- **Scalability**: Easy addition of new countries and markets
 
-### 8.2 数据验证
-- **Run ID格式控制**: 正则表达式 `^[a-zA-Z][a-zA-Z0-9_]*$`
-- **唯一性约束**: `(base_model, run_id, country)` 联合唯一。
-- **实时表单验证**: 前端和后端双重验证。
+### 8.2 Progress Tracking System
+- **Client Storage**: Uses localStorage to track user progress
+- **Visual Indicators**: Real-time display of completion status
+- **Country-Specific**: Independent progress tracking for each country
 
-### 8.3 用户体验
-- **两级导航**: 从宏观（全球）到微观（国家）的清晰导航路径。
-- **智能切换**: 基础模型变更时，页面自动刷新以显示相关数据。
-- **进度追踪**: 使用localStorage在客户端追踪用户在分析流程中的完成状态。
-- **HTMX增强**: 在预测信息页面实现无刷新提交和响应，提升流畅度。
+### 8.3 User Experience Optimization
+- **Two-Tier Navigation**: Clear hierarchy from global view to country view
+- **Smart Switching**: Automatic data updates when base model changes
+- **Responsive Design**: Consistent experience across devices
 
 ---
 
-## 9. 项目部署
+## 9. Project Deployment
 
-### 9.1 环境准备
+### 9.1 Environment Setup
 ```bash
-# 创建虚拟环境
-uv venv
-source .venv/bin/activate
+# Create virtual environment
+python -m venv .venv
+source .venv/bin/activate  # Linux/Mac
+# or .venv\Scripts\activate  # Windows
 
-# 安装依赖
-uv pip install -r requirements.txt
-# 或者，如果使用pyproject.toml
-uv pip install -e .
+# Install dependencies
+pip install -r requirements.txt
 ```
 
-### 9.2 数据库初始化
+### 9.2 Database Initialization
 ```bash
-# 执行迁移
+# Execute migrations
 python manage.py migrate
 
-# 创建示例数据
-python create_sample_data.py
+# Create sample data
+python manage.py seed_countries
 ```
 
-### 9.3 运行服务
+### 9.3 Run Service
 ```bash
-# 启动开发服务器
+# Start development server
 python manage.py runserver
 
-# 访问应用
+# Access application
 # http://localhost:8000
 ```
 
-### 9.4 项目结构
+### 9.4 Project Structure
 ```
 mlc_demo/
-├── .venv/                          # 虚拟环境
-├── pyproject.toml                  # 项目配置
-├── manage.py                       # Django管理入口
-├── create_sample_data.py           # 示例数据脚本
-├── mlc_center/                     # Django项目配置
+├── .venv/                          # Virtual environment
+├── pyproject.toml                  # Project configuration
+├── manage.py                       # Django management entry
+├── mlc_center/                     # Django project configuration
 │   ├── settings.py
 │   └── urls.py
-└── core/                           # 核心应用
-    ├── models.py                   # 数据模型
-    ├── views.py                    # 视图逻辑
-    ├── forms.py                    # 表单定义
-    ├── urls.py                     # 应用路由
-    ├── analysis_utils.py           # 分析工具
-    ├── templates/core/             # 模板文件
-    │   ├── base.html
-    │   ├── home.html               # 全球入口页
-    │   ├── country_timeline.html   # 国家时间线
-    │   ├── country_retrain.html    # 国家重训练入口
-    │   ├── prediction_info.html
-    │   ├── transaction_analysis.html
-    │   └── ... (其他分析页面)
-    └── static/core/                # 静态资源
-        ├── custom.css
-        └── vendor/flags/           # 国旗图片
+└── core/                           # Core application
+    ├── models.py                   # Data models
+    ├── views.py                    # View logic
+    ├── forms.py                    # Form definitions
+    ├── urls.py                     # Application routing
+    ├── analysis_utils.py           # Analysis tools
+    ├── templates/core/             # Template files
+    │   ├── home.html
+    │   ├── model_timeline.html
+    │   ├── model_training_dashboard.html
+    │   ├── country_base.html
+    │   └── ... (other analysis pages)
+    ├── static/core/                # Static resources
+    │   └── custom.css
+    └── management/commands/        # Management commands
+        └── seed_countries.py
 ```
 
 ---
 
-## 10. 开发规范
+## 10. Development Standards
 
-### 10.1 代码风格
-- 使用Black进行代码格式化
-- 遵循PEP 8编码规范
-- 88字符行长度限制
+### 10.1 Code Style
+- Use Black for code formatting
+- Follow PEP 8 coding standards
+- 88-character line length limit
 
-### 10.2 命名规范
-- **模型**: 使用驼峰命名法 (BaseModel)
-- **视图**: 使用下划线命名法 (prediction_info_view)
-- **模板**: 使用下划线命名法 (prediction_info.html)
-- **CSS类**: 使用短横线命名法 (nav-link, country-card)
+### 10.2 Naming Conventions
+- **Models**: Use CamelCase (BaseModel, Country)
+- **Views**: Use snake_case (home_view, model_timeline_view)
+- **Templates**: Use snake_case (home.html, model_timeline.html)
+- **CSS Classes**: Use kebab-case (nav-link, country-card)
 
-### 10.3 文档规范
-- 所有函数和类需要docstring
-- 复杂逻辑需要行内注释
-- API变更需要更新文档
-
-### 10.4 测试规范
-- 使用pytest进行单元测试
-- 视图函数需要测试覆盖
-- 表单验证需要测试覆盖
-
-### 10.5 版本控制
-- 使用语义化版本号 (Semantic Versioning)
-- 提交信息遵循约定式提交规范
-- 功能开发使用feature分支
+### 10.3 Documentation Standards
+- All functions and classes require docstrings
+- Complex logic needs inline comments
+- API changes require documentation updates
 
 ---
 
-## 11. 未来规划
+## 11. Future Roadmap
 
-### 11.1 技术架构升级
+### 11.1 Phase 1: Real Data Integration (3 months)
+- [ ] Google Cloud authentication and permission configuration
+- [ ] BigQuery connector development (supporting multi-country datasets)
+- [ ] SQL query engine refactoring
+- [ ] Data validation and error handling mechanisms
 
-#### 数据源集成
+### 11.2 Phase 2: Analysis Feature Enhancement (6 months)
+- [ ] Cross-market model performance comparison dashboard
+- [ ] Model drift detection (country-specific)
+- [ ] Automated alerting system
+- [ ] Historical trend comparison analysis
+
+### 11.3 Phase 3: Enterprise-Level Features (12 months)
+- [ ] User permission management system (distinguishing global/country-level roles)
+- [ ] Audit logs and compliance reporting
+- [ ] REST API development
+- [ ] Performance optimization and horizontal scaling
+- [ ] High availability deployment solutions
+
+### 11.4 Technical Architecture Upgrade
+
+#### BigQuery Integration Example
 ```python
-# 未来BigQuery连接配置
 from google.cloud import bigquery
 
 class BigQueryService:
     def __init__(self, country_code):
         self.client = bigquery.Client()
-        # 数据集可以根据国家进行区分
         self.dataset_id = f"aml_ai_results_{country_code}"
 
     def query_train_results(self, run_id):
-        """查询训练结果表"""
+        """Query training results table"""
         query = f"""
         SELECT * FROM `{self.dataset_id}.train_results`
         WHERE run_id = '{run_id}'
         """
         return self.client.query(query).to_dataframe()
-# ...
 ```
 
-#### SQL查询模板化
+#### Cross-Country Performance Comparison
 ```python
-# 分析查询模板
-TRANSACTION_ANALYSIS_QUERY = """
-WITH daily_stats AS (
-  SELECT
-    DATE(transaction_timestamp) as date,
-    COUNT(*) as transaction_count,
-    SUM(amount) as total_amount,
-    SUM(CASE WHEN ml_score > {threshold} THEN 1 ELSE 0 END) as alerts
-  FROM `{dataset}.prediction_results_{country_code}` -- 表名也可分国家
-  WHERE run_id = '{run_id}'
-  GROUP BY DATE(transaction_timestamp)
-)
-SELECT
-  date,
-  transaction_count,
-  total_amount,
-  alerts,
-  SAFE_DIVIDE(alerts, transaction_count) * 100 as alert_rate
-FROM daily_stats
-ORDER BY date
-"""
+def compare_models_across_countries(model_name, metric='accuracy'):
+    """Compare same model performance across different countries"""
+    countries = ['UK', 'HK', 'MX', 'SG']
+    results = {}
+
+    for country in countries:
+        service = BigQueryService(country.lower())
+        performance = service.get_model_performance(model_name, metric)
+        results[country] = performance
+
+    return results
 ```
 
-### 11.2 功能扩展路线图
+---
 
-#### 第一阶段：真实数据集成（3个月）
-- [ ] Google Cloud认证和权限配置
-- [ ] BigQuery连接器开发（支持多国家数据集）
-- [ ] SQL查询引擎重构
-- [ ] 数据验证和错误处理
+## Conclusion
 
-#### 第二阶段：分析功能增强（6个月）
-- [ ] **跨市场模型性能对比仪表盘**
-- [ ] 模型漂移检测（分国家）
-- [ ] 自动化告警系统
-- [ ] 历史趋势对比分析
+Model Lifecycle Center (MLC) has evolved from a single analysis tool to a globalized model lifecycle management platform. Through the introduction of multi-country architecture, modernized UI design, and complete workflow support, MLC provides a powerful and flexible solution for banking AML operations.
 
-#### 第三阶段：企业级功能（12个月）
-- [ ] 用户权限管理系统（区分全球/国家级角色）
-- [ ] 审计日志和合规报告
-- [ ] API接口开发
-- [ ] 性能优化和扩展
+The current Demo version establishes a solid technical foundation, preparing for future integration with Google Cloud and BigQuery. As the project continues to develop, MLC will become the standard platform for global financial institutions to conduct AML model management.
